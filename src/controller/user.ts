@@ -3,7 +3,7 @@ import {
     Response,
 } from 'express';
 
-import { validate } from 'class-validator';
+import { validate, ValidationError } from 'class-validator';
 import { getCustomRepository } from 'typeorm';
 import { User } from "../entity/User";
 import { UserRepository } from '../repository/UserRepository';
@@ -17,8 +17,8 @@ function getRepository(): UserRepository {
  */
 export async function createUser(request: Request, response: Response): Promise<void> {
     const repo: UserRepository = getRepository();
+    const user: User = new User();
     const body = request.body;
-    const user = new User();
 
     if (!hasObjectProperties(body, ['email', 'password'])) {
         response.status(400).end();
@@ -28,7 +28,7 @@ export async function createUser(request: Request, response: Response): Promise<
     user.email = body.email;
     user.password = body.password;
 
-    const errors = await validate(user);
+    const errors: ValidationError[] = await validate(user);
 
     if (errors.length > 0) {
         response.status(422).json({ message: 'Unprocessable Entity', errors: errors });
@@ -133,7 +133,7 @@ export async function updateUser(request: Request, response: Response): Promise<
     user.lastName = body.lastName;
     user.isActive = body.isActive;
 
-    const errors = await validate(user);
+    const errors: ValidationError[] = await validate(user);
 
     if (errors.length > 0) {
         response.status(422).json({ message: 'Unprocessable Entity' });
