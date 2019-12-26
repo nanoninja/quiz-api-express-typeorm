@@ -6,7 +6,8 @@
    "password": "admin",
    "database": "test",
    "synchronize": true,
-   "logging": false,
+   "logging": ["warn", "error"],
+   "logger": "file",
    "entities": [
       "src/entity/**/*.ts"
    ],

@@ -4,38 +4,63 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn
-} from "typeorm";
+} from 'typeorm';
+
+import {
+    IsAlpha,
+    IsDate,
+    IsEmail,
+    MaxLength,
+    IsOptional,
+    IsUUID,
+    IsNotEmpty,
+    IsBoolean
+} from 'class-validator';
 
 @Entity()
 export class User {
 
+    @IsOptional()
+    @IsUUID()
     @PrimaryGeneratedColumn('uuid')
-    id: number;
+    id: string;
 
+    @IsEmail()
     @Column({
-        length: 120,
+        length: 140,
         unique: true
     })
     email: string;
 
+    @IsNotEmpty()
+    @MaxLength(255)
     @Column()
     password: string;
 
-    @Column()
+    @IsOptional()
+    @IsNotEmpty()
+    @IsAlpha()
+    @Column({ default: '' })
     firstName: string;
 
-    @Column()
+    @IsOptional()
+    @IsNotEmpty()
+    @IsAlpha()
+    @Column({ default: '' })
     lastName: string;
 
-    @Column()
-    age: number;
+    @IsOptional()
+    @IsBoolean()
+    @Column({ default: false })
+    isActive: boolean;
 
-    @Column()
-    activated: boolean = false;
-
+    @IsOptional()
+    @IsDate()
     @CreateDateColumn()
     createdAt: Date;
 
+    @IsOptional()
+    @IsDate()
     @UpdateDateColumn()
     updatedAt: Date;
 }
