@@ -16,14 +16,15 @@ function getRepository(): UserRepository {
  * Creates a new user instance.
  */
 export async function createUser(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getRepository();
-    const user: User = new User();
     const body = request.body;
 
     if (!hasObjectProperties(body, ['email', 'password'])) {
         response.status(400).end();
         return;
     }
+
+    const repo: UserRepository = getRepository();
+    const user: User = new User();
 
     user.email = body.email;
     user.password = body.password;
@@ -35,17 +36,12 @@ export async function createUser(request: Request, response: Response): Promise<
         return;
     }
 
-    await repo.save(user)
-        .then(
-            (user: User) => response.json(user),
-            (err: any) => {
-                if (err.code && err.code === 'ER_DUP_ENTRY') {
-                    response.status(422).json({ message: 'Unprocessable Entity' });
-                    return;
-                }
-                response.status(500).json('Internal Server Error');
-            }
-        );
+    try {
+        await repo.save(user);
+        response.status(201).json(user);
+    } catch (err) {
+        response.status(422).end();
+    }
 }
 
 /**
@@ -54,7 +50,6 @@ export async function createUser(request: Request, response: Response): Promise<
 export async function getUsers(request: Request, response: Response) {
     const repo: UserRepository = getRepository();
     const users: User[] = await repo.find();
-
     response.json(users);
 }
 
@@ -112,7 +107,6 @@ export async function removeUser(request: Request, response: Response): Promise<
  * Updates user entity.
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getRepository();
     const body = request.body;
 
     if (!hasObjectProperties(body, ['id', 'email', 'firstName', 'lastName'])) {
@@ -120,7 +114,8 @@ export async function updateUser(request: Request, response: Response): Promise<
         return;
     }
 
-    let user: User | undefined = await repo.findById(body.id);
+    const repo: UserRepository = getRepository();
+    const user: User | undefined = await repo.findById(body.id);
 
     if (!user) {
         response.status(404).json({ message: 'Unprocessable Entity' });
