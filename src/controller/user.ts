@@ -17,13 +17,18 @@ function getRepository(): UserRepository {
  */
 export async function createUser(request: Request, response: Response): Promise<void> {
 
-    // get a user repository to perform operations with user.
+    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
-    const data = request.body;
+    const body = request.body;
     const user = new User();
 
-    user.email = data.email;
-    user.password = data.password;
+    if (!hasObjectProperties(body, ['email', 'password'])) {
+        response.status(400).end();
+        return;
+    }
+
+    user.email = body.email;
+    user.password = body.password;
 
     const errors = await validate(user);
 
@@ -32,7 +37,7 @@ export async function createUser(request: Request, response: Response): Promise<
         return;
     }
 
-    repo.save(user)
+    await repo.save(user)
         .then(
             (user: User) => response.json(user),
             (err: any) => {
@@ -56,7 +61,7 @@ export async function getUsers(request: Request, response: Response) {
     // Load a users.
     const users: User[] = await repo.find();
 
-    // Send saved status back.
+    // Send loaded users back.
     response.json(users);
 }
 
@@ -85,7 +90,7 @@ export async function getUserById(request: Request, response: Response): Promise
  */
 export async function getUserByEmail(request: Request, response: Response): Promise<void> {
 
-    // get a user repository to perform operations with user.
+    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
 
     // Load a user by a given user email.
@@ -105,7 +110,7 @@ export async function getUserByEmail(request: Request, response: Response): Prom
  */
 export async function removeUser(request: Request, response: Response): Promise<void> {
 
-    // get a user repository to perform operations with user.
+    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
 
     // Load a user by a given user id.
