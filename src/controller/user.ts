@@ -54,26 +54,17 @@ export async function createUser(request: Request, response: Response): Promise<
  * Gets all users.
  */
 export async function getUsers(request: Request, response: Response) {
-
-    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
-
-    // Load a users.
     const users: User[] = await repo.find();
 
-    // Send loaded users back.
     response.json(users);
 }
 
 /**
- * Gets an user by its id.
+ * Gets a user by its id.
  */
 export async function getUserById(request: Request, response: Response): Promise<void> {
-
-    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
-
-    // Load a user by a given user id.
     const user: User | undefined = await repo.findById(request.params.id);
 
     if (!user) {
@@ -81,19 +72,14 @@ export async function getUserById(request: Request, response: Response): Promise
         return;
     }
 
-    // Send loaded user.
     response.json(user);
 }
 
 /**
- * Gets an user by its email.
+ * Gets a user by its email.
  */
 export async function getUserByEmail(request: Request, response: Response): Promise<void> {
-
-    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
-
-    // Load a user by a given user email.
     const user: User | undefined = await repo.findByEmail(request.params.email);
 
     if (!user) {
@@ -101,19 +87,14 @@ export async function getUserByEmail(request: Request, response: Response): Prom
         return;
     }
 
-    // Send loaded user.
     response.json(user);
 }
 
 /**
- * Removes an user by its id.
+ * Removes a user by its id.
  */
 export async function removeUser(request: Request, response: Response): Promise<void> {
-
-    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
-
-    // Load a user by a given user id.
     const user: User | undefined = await repo.findById(request.params.id);
 
     if (!user) {
@@ -130,11 +111,9 @@ export async function removeUser(request: Request, response: Response): Promise<
 }
 
 /**
- * Updates a user entity.
+ * Updates user entity.
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
-
-    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
     const body = request.body;
 
@@ -143,7 +122,6 @@ export async function updateUser(request: Request, response: Response): Promise<
         return;
     }
 
-    // Load a user by a given id.
     let user: User | undefined = await repo.findById(body.id);
 
     if (!user) {
@@ -164,10 +142,7 @@ export async function updateUser(request: Request, response: Response): Promise<
         return;
     }
 
-    // Save received user.
     await repo.save(user);
-
-    // Send saved status back.
     response.status(204);
 }
 
