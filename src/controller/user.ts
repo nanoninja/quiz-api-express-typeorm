@@ -16,8 +16,6 @@ function getRepository(): UserRepository {
  * Creates a new user instance.
  */
 export async function createUser(request: Request, response: Response): Promise<void> {
-
-    // Get a user repository to perform operations with user.
     const repo: UserRepository = getRepository();
     const body = request.body;
     const user = new User();
