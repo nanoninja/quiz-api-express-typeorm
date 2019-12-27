@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { validate, Validator, ValidationError } from 'class-validator';
 import { getCustomRepository } from 'typeorm';
+import { Password } from '../library/password';
 import { User } from "../entity/User";
 import { UserRepository } from '../repository/UserRepository';
 
@@ -19,7 +20,7 @@ export async function createUser(request: Request, response: Response): Promise<
     const user: User = new User();
 
     user.email = body.email;
-    user.password = body.password;
+    user.password = await Password.hash(body.password);
 
     const errors: ValidationError[] = await validate(user);
     if (errors.length > 0) {

@@ -1,5 +1,5 @@
-import { Route } from './app/router';
-import { hello } from './controller';
+import { Route } from './router';
+import { hello } from '../controller';
 
 import {
     createUser,
@@ -8,7 +8,7 @@ import {
     getUsers,
     removeUser,
     updateUser
-} from './controller/user';
+} from '../controller/user';
 
 export const routes: Route[] = [
     {

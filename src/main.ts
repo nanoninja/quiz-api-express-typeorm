@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import * as path from 'path';
 import * as express from 'express';
 import { createConnection, Connection } from 'typeorm';
-import { routes } from './routes';
+import { routes } from './app/routes';
 import { bootstrap } from './app/bootstrap';
 
 const PORT = Number(process.env.PORT);
