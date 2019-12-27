@@ -1,22 +1,14 @@
-import {
-    Request,
-    Response,
-} from 'express';
-
+import { Request, Response } from 'express';
 import { validate, Validator, ValidationError } from 'class-validator';
 import { getCustomRepository } from 'typeorm';
 import { User } from "../entity/User";
 import { UserRepository } from '../repository/UserRepository';
 
-function getRepository(): UserRepository {
-    return getCustomRepository(UserRepository);
-}
-
 /**
  * Creates a new user instance.
  */
 export async function createUser(request: Request, response: Response): Promise<void> {
-    const body = request.body;
+    const body = request.body as User;
 
     if (!hasObjectProperties(body, ['email', 'password'])) {
         response.status(400).end();
@@ -107,7 +99,6 @@ export async function removeUser(request: Request, response: Response): Promise<
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
     const validator: Validator = new Validator();
-
     if (!validator.isUUID(request.body.id)) {
         response.status(400).end();
     }
@@ -119,20 +110,18 @@ export async function updateUser(request: Request, response: Response): Promise<
         response.status(404).end();
         return;
     }
-
     if (!hasObjectProperties(request.body, Object.getOwnPropertyNames(data))) {
         response.status(400).end();
         return;
     }
 
     const body: User = request.body as User;
-    const user: User = new User();
-
     body.createdAt = data.createdAt;
     body.updatedAt = data.createdAt;
-    map(user, body);
 
+    const user: User = map(body);
     const errors: ValidationError[] = await validate(user);
+
     if (errors.length > 0) {
         response.status(422).end();
         return;
@@ -142,21 +131,29 @@ export async function updateUser(request: Request, response: Response): Promise<
     response.status(204).end();
 }
 
-function map(user: User, body: User): void {
-    user.id = body.id;
-    user.email = body.email;
-    user.password = body.password;
-    user.isActive = body.isActive;
-    user.createdAt = body.createdAt;
-    user.updatedAt = body.updatedAt;
+function getRepository(): UserRepository {
+    return getCustomRepository(UserRepository);
+}
 
-    if (body.firstName !== '') {
-        user.firstName = body.firstName;
+function map(data: User): User {
+    const user: User = new User();
+
+    user.id = data.id;
+    user.email = data.email;
+    user.password = data.password;
+    user.isActive = data.isActive;
+    user.createdAt = data.createdAt;
+    user.updatedAt = data.updatedAt;
+
+    if (data.firstName !== '') {
+        user.firstName = data.firstName;
     }
 
-    if (body.lastName !== '') {
-        user.lastName = body.lastName;
+    if (data.lastName !== '') {
+        user.lastName = data.lastName;
     }
+
+    return user;
 }
 
 function hasObjectProperties(obj: any, properties: string[]): boolean {

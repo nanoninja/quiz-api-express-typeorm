@@ -1,4 +1,4 @@
-import { Route } from './app/router/Route';
+import { Route } from './app/router';
 import { hello } from './controller';
 
 import {

@@ -1,8 +1,6 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-
-import { Router } from './router/Router';
-import { Route } from './router/Route';
+import { Route, Router } from './router';
 
 export function bootstrap(routes: Route[]): express.Application {
     const app = express();

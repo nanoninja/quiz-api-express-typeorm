@@ -1,13 +1,14 @@
 import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
-import { Route } from "./Route";
+
+export interface Route {
+    path: string
+    method: string
+    action: Function
+    middleware?: NextFunction
+}
 
 export class Router {
-
-    /**
-     * @param routes
-     * @return express.Router
-     */
     load(routes: Route[]): express.Router {
         const router = express.Router();
 
