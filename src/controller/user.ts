@@ -3,7 +3,7 @@ import {
     Response,
 } from 'express';
 
-import { validate, ValidationError } from 'class-validator';
+import { validate, Validator, ValidationError } from 'class-validator';
 import { getCustomRepository } from 'typeorm';
 import { User } from "../entity/User";
 import { UserRepository } from '../repository/UserRepository';
@@ -30,7 +30,6 @@ export async function createUser(request: Request, response: Response): Promise<
     user.password = body.password;
 
     const errors: ValidationError[] = await validate(user);
-
     if (errors.length > 0) {
         response.status(422).json({ message: 'Unprocessable Entity', errors: errors });
         return;
@@ -107,39 +106,60 @@ export async function removeUser(request: Request, response: Response): Promise<
  * Updates user entity.
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
-    const body = request.body;
+    const validator: Validator = new Validator();
 
-    if (!hasObjectProperties(body, ['id', 'email', 'firstName', 'lastName'])) {
-        response.status(400).json('Bad Request');
-        return;
+    if (!validator.isUUID(request.body.id)) {
+        response.status(400).end();
     }
 
     const repo: UserRepository = getRepository();
-    const user: User | undefined = await repo.findById(body.id);
+    const data: User | undefined = await repo.findById(request.body.id);
 
-    if (!user) {
-        response.status(404).json({ message: 'Unprocessable Entity' });
+    if (!data) {
+        response.status(404).end();
         return;
     }
 
-    user.id = body.id;
-    user.email = body.email;
-    user.firstName = body.firstName;
-    user.lastName = body.lastName;
-    user.isActive = body.isActive;
+    if (!hasObjectProperties(request.body, Object.getOwnPropertyNames(data))) {
+        response.status(400).end();
+        return;
+    }
+
+    const body: User = request.body as User;
+    const user: User = new User();
+
+    body.createdAt = data.createdAt;
+    body.updatedAt = data.createdAt;
+    map(user, body);
 
     const errors: ValidationError[] = await validate(user);
-
     if (errors.length > 0) {
-        response.status(422).json({ message: 'Unprocessable Entity' });
+        response.status(422).end();
         return;
     }
 
     await repo.save(user);
-    response.status(204);
+    response.status(204).end();
 }
 
-function hasObjectProperties(o: any, properties: string[]): boolean {
-    const names = Object.getOwnPropertyNames(o);
+function map(user: User, body: User): void {
+    user.id = body.id;
+    user.email = body.email;
+    user.password = body.password;
+    user.isActive = body.isActive;
+    user.createdAt = body.createdAt;
+    user.updatedAt = body.updatedAt;
+
+    if (body.firstName !== '') {
+        user.firstName = body.firstName;
+    }
+
+    if (body.lastName !== '') {
+        user.lastName = body.lastName;
+    }
+}
+
+function hasObjectProperties(obj: any, properties: string[]): boolean {
+    const names = Object.getOwnPropertyNames(obj);
     return properties.filter(item => names.indexOf(item) < 0).length === 0;
 }

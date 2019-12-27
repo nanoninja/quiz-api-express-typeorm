@@ -38,13 +38,11 @@ export class User {
     password: string;
 
     @IsOptional()
-    @IsNotEmpty()
     @IsAlpha()
     @Column({ default: '' })
     firstName: string;
 
     @IsOptional()
-    @IsNotEmpty()
     @IsAlpha()
     @Column({ default: '' })
     lastName: string;
