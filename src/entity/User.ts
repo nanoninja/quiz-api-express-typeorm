@@ -60,7 +60,7 @@ export class User {
         eager: true,
         cascade: true
     })
-    @JoinTable()
+    @JoinTable({ name: 'user_has_role' })
     roles: Role[];
 
     @IsOptional()

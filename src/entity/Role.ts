@@ -34,7 +34,7 @@ export class Role {
         cascade: true,
         eager: true
     })
-    @JoinTable()
+    @JoinTable({ name: 'role_has_permission' })
     permissions: Permission[];
 
     @CreateDateColumn()
