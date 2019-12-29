@@ -8,9 +8,78 @@ import { RoleRepository } from '../repository/RoleRepository';
 import { UserRepository } from '../repository/UserRepository';
 
 /**
+ * Authenticates user by its email.
+ */
+export async function authenticate(request: Request, response: Response): Promise<void> {
+    const validator: Validator = new Validator();
+    const email: string = request.body.email;
+    const password: string = request.body.password;
+
+    if (!validator.isEmail(email) || !validator.isNotEmpty(password)) {
+        response.status(400).end();
+        return;
+    }
+
+    const repo: UserRepository = getCustomRepository(UserRepository);
+    const user: User | undefined = await repo.findByEmail(email);
+
+    if (!user) {
+        response.status(422).end();
+        return;
+    }
+
+    if (!Password.verify(password, user.password)) {
+        response.status(422).end();
+        return;
+    }
+
+    response.json(user);
+}
+
+/**
+ * Gets all users.
+ */
+export async function getUsers(request: Request, response: Response) {
+    const repo: UserRepository = getCustomRepository(UserRepository);
+    const users: User[] = await repo.find();
+
+    response.json(users);
+}
+
+/**
+ * Gets a user by its email.
+ */
+export async function getUserByEmail(request: Request, response: Response): Promise<void> {
+    const repo: UserRepository = getCustomRepository(UserRepository);
+    const user: User | undefined = await repo.findByEmail(request.params.email);
+
+    if (!user) {
+        response.status(404).end();
+        return;
+    }
+
+    response.json(user);
+}
+
+/**
+ * Gets a user by its id.
+ */
+export async function getUserById(request: Request, response: Response): Promise<void> {
+    const repo: UserRepository = getCustomRepository(UserRepository);
+    const user: User | undefined = await repo.findById(request.params.id);
+
+    if (!user) {
+        response.status(404).end();
+        return;
+    }
+
+    response.json(user);
+}
+
+/**
  * Creates a new user instance.
  */
-export async function createUser(request: Request, response: Response): Promise<void> {
+export async function register(request: Request, response: Response): Promise<void> {
     const body = request.body as User;
 
     if (!hasObjectProperties(body, ['email', 'password'])) {
@@ -34,7 +103,8 @@ export async function createUser(request: Request, response: Response): Promise<
     const role = await roleRepo.findByName(Role.ROLE_USER);
 
     if (!role) {
-        throw new Error('role is undefined');
+        response.status(422).end();
+        return;
     }
 
     user.roles = [role];
@@ -43,47 +113,12 @@ export async function createUser(request: Request, response: Response): Promise<
         await repo.save(user);
         response.status(201).json(user);
     } catch (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+            response.status(409).end();
+            return;
+        }
         response.status(422).end();
     }
-}
-
-/**
- * Gets all users.
- */
-export async function getUsers(request: Request, response: Response) {
-    const repo: UserRepository = getCustomRepository(UserRepository);
-    const users: User[] = await repo.find();
-    response.json(users);
-}
-
-/**
- * Gets a user by its id.
- */
-export async function getUserById(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getCustomRepository(UserRepository);
-    const user: User | undefined = await repo.findById(request.params.id);
-
-    if (!user) {
-        response.status(404).end();
-        return;
-    }
-
-    response.json(user);
-}
-
-/**
- * Gets a user by its email.
- */
-export async function getUserByEmail(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getCustomRepository(UserRepository);
-    const user: User | undefined = await repo.findByEmail(request.params.email);
-
-    if (!user) {
-        response.status(404).end();
-        return;
-    }
-
-    response.json(user);
 }
 
 /**
@@ -111,6 +146,7 @@ export async function removeUser(request: Request, response: Response): Promise<
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
     const validator: Validator = new Validator();
+
     if (!validator.isUUID(request.body.id)) {
         response.status(400).end();
     }
@@ -122,6 +158,7 @@ export async function updateUser(request: Request, response: Response): Promise<
         response.status(404).end();
         return;
     }
+
     if (!hasObjectProperties(request.body, Object.getOwnPropertyNames(data))) {
         response.status(400).end();
         return;

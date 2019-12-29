@@ -2,12 +2,13 @@ import { Route } from './router';
 import { hello } from '../controller';
 
 import {
-    createUser,
+    register,
     getUserByEmail,
     getUserById,
     getUsers,
     removeUser,
-    updateUser
+    updateUser,
+    authenticate
 } from '../controller/user';
 
 export const routes: Route[] = [
@@ -17,6 +18,11 @@ export const routes: Route[] = [
         action: hello
     },
     {
+        path: '/users/authenticate',
+        method: 'post',
+        action: authenticate
+    },
+    {
         path: '/users',
         method: 'get',
         action: getUsers,
@@ -24,7 +30,7 @@ export const routes: Route[] = [
     {
         path: '/users',
         method: 'post',
-        action: createUser,
+        action: register,
     },
     {
         path: '/users',
