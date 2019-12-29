@@ -3,7 +3,9 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    ManyToMany,
+    JoinTable
 } from 'typeorm';
 
 import {
@@ -16,6 +18,7 @@ import {
     IsNotEmpty,
     IsBoolean
 } from 'class-validator';
+import { Role } from './Role';
 
 @Entity()
 export class User {
@@ -52,6 +55,14 @@ export class User {
     @Column({ default: false })
     isActive: boolean;
 
+    @ManyToMany(type => Role, role => role.users, {
+        primary: true,
+        nullable: false,
+        eager: true
+    })
+    @JoinTable()
+    roles: Role[];
+
     @IsOptional()
     @IsDate()
     @CreateDateColumn()
@@ -61,4 +72,45 @@ export class User {
     @IsDate()
     @UpdateDateColumn()
     updatedAt: Date;
+
+    /**
+     * Check if a permission is set.
+     */
+    hasRole(name: string): boolean {
+        const result = this.roles.find((role: Role) => {
+            return role.name === name;
+        });
+
+        return result !== undefined;
+    }
+
+    /**
+     * Check if this user has a specific privilege.
+     */
+    hasPrivilege(permission: string): boolean {
+        return this.roles.some((role: Role) => {
+            return role.hasPermission(permission);
+        });
+    }
+
+    /**
+     * Hydrates this user from data.
+     */
+    hydrate(data: User) {
+        this.id = data.id;
+        this.email = data.email;
+        this.password = data.password;
+        this.isActive = data.isActive;
+        this.createdAt = data.createdAt;
+        this.updatedAt = data.updatedAt;
+        this.roles = data.roles;
+
+        if (data.firstName !== '') {
+            this.firstName = data.firstName;
+        }
+
+        if (data.lastName !== '') {
+            this.lastName = data.lastName;
+        }
+    }
 }

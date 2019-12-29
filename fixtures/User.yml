@@ -1,0 +1,14 @@
+entity: User
+items:
+  user1:
+    email: "john.doe@gmail.com"
+    firstName: "John"
+    lastName: "Doe"
+    password: "$2a$08$FyzkpmhYj5IFoiJHhfba4OOSTm4d.DRy7J3qyBDG52jYPtKtF0Le."
+    isActive: 1
+  user2:
+    email: "jane.doe@gmail.com"
+    firstName: "Jane"
+    lastName: "Doe"
+    password: "$2a$08$FyzkpmhYj5IFoiJHhfba4OOSTm4d.DRy7J3qyBDG52jYPtKtF0Le."
+    isActive: 1

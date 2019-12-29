@@ -7,6 +7,7 @@
       "@types/node": "^8.10.59",
       "nodemon": "^2.0.2",
       "ts-node": "3.3.0",
+      "typeorm-fixtures-cli": "^1.4.2",
       "typescript": "3.3.3333"
    },
    "dependencies": {
@@ -24,6 +25,7 @@
    },
    "scripts": {
       "start": "ts-node src/main.ts",
-      "dev": "nodemon"
+      "dev": "nodemon",
+      "fixtures": "fixtures ./fixtures --config ormconfig.json --sync --require=ts-node/register --require=ts-node/register"
    }
 }

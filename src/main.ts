@@ -3,9 +3,9 @@ import 'reflect-metadata';
 
 import * as path from 'path';
 import * as express from 'express';
-import { createConnection, Connection } from 'typeorm';
 import { routes } from './app/routes';
 import { bootstrap } from './app/bootstrap';
+import { createConnection, Connection } from 'typeorm';
 
 const PORT = Number(process.env.PORT);
 const HOST = String(process.env.HOST);
@@ -15,6 +15,7 @@ createConnection()
         const app = bootstrap(routes);
 
         app.use(express.static(path.join(__dirname, 'public')));
+
         app.listen(PORT, HOST, () => {
             console.log(`[Express] is listenning on ${HOST}:${PORT}`);
         });

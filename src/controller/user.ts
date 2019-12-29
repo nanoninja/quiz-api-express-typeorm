@@ -2,7 +2,9 @@ import { Request, Response } from 'express';
 import { validate, Validator, ValidationError } from 'class-validator';
 import { getCustomRepository } from 'typeorm';
 import { Password } from '../library/password';
-import { User } from "../entity/User";
+import { User } from '../entity/User';
+import { Role } from '../entity/Role';
+import { RoleRepository } from '../repository/RoleRepository';
 import { UserRepository } from '../repository/UserRepository';
 
 /**
@@ -16,7 +18,7 @@ export async function createUser(request: Request, response: Response): Promise<
         return;
     }
 
-    const repo: UserRepository = getRepository();
+    const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User = new User();
 
     user.email = body.email;
@@ -27,6 +29,15 @@ export async function createUser(request: Request, response: Response): Promise<
         response.status(422).json({ message: 'Unprocessable Entity', errors: errors });
         return;
     }
+
+    const roleRepo: RoleRepository = getCustomRepository(RoleRepository);
+    const role = await roleRepo.findByName(Role.ROLE_USER);
+
+    if (!role) {
+        throw new Error('role is undefined');
+    }
+
+    user.roles = [role];
 
     try {
         await repo.save(user);
@@ -40,7 +51,7 @@ export async function createUser(request: Request, response: Response): Promise<
  * Gets all users.
  */
 export async function getUsers(request: Request, response: Response) {
-    const repo: UserRepository = getRepository();
+    const repo: UserRepository = getCustomRepository(UserRepository);
     const users: User[] = await repo.find();
     response.json(users);
 }
@@ -49,7 +60,7 @@ export async function getUsers(request: Request, response: Response) {
  * Gets a user by its id.
  */
 export async function getUserById(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getRepository();
+    const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User | undefined = await repo.findById(request.params.id);
 
     if (!user) {
@@ -64,7 +75,7 @@ export async function getUserById(request: Request, response: Response): Promise
  * Gets a user by its email.
  */
 export async function getUserByEmail(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getRepository();
+    const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User | undefined = await repo.findByEmail(request.params.email);
 
     if (!user) {
@@ -79,7 +90,7 @@ export async function getUserByEmail(request: Request, response: Response): Prom
  * Removes a user by its id.
  */
 export async function removeUser(request: Request, response: Response): Promise<void> {
-    const repo: UserRepository = getRepository();
+    const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User | undefined = await repo.findById(request.params.id);
 
     if (!user) {
@@ -104,7 +115,7 @@ export async function updateUser(request: Request, response: Response): Promise<
         response.status(400).end();
     }
 
-    const repo: UserRepository = getRepository();
+    const repo: UserRepository = getCustomRepository(UserRepository);
     const data: User | undefined = await repo.findById(request.body.id);
 
     if (!data) {
@@ -117,12 +128,13 @@ export async function updateUser(request: Request, response: Response): Promise<
     }
 
     const body: User = request.body as User;
+    const user: User = new User();
+
     body.createdAt = data.createdAt;
     body.updatedAt = data.createdAt;
+    user.hydrate(body);
 
-    const user: User = map(body);
     const errors: ValidationError[] = await validate(user);
-
     if (errors.length > 0) {
         response.status(422).end();
         return;
@@ -130,31 +142,6 @@ export async function updateUser(request: Request, response: Response): Promise<
 
     await repo.save(user);
     response.status(204).end();
-}
-
-function getRepository(): UserRepository {
-    return getCustomRepository(UserRepository);
-}
-
-function map(data: User): User {
-    const user: User = new User();
-
-    user.id = data.id;
-    user.email = data.email;
-    user.password = data.password;
-    user.isActive = data.isActive;
-    user.createdAt = data.createdAt;
-    user.updatedAt = data.updatedAt;
-
-    if (data.firstName !== '') {
-        user.firstName = data.firstName;
-    }
-
-    if (data.lastName !== '') {
-        user.lastName = data.lastName;
-    }
-
-    return user;
 }
 
 function hasObjectProperties(obj: any, properties: string[]): boolean {

@@ -1,0 +1,10 @@
+entity: Permission
+items:
+  permission1:
+    description: "user:add"
+  permission2:
+    description: "user:update"
+  permission3:
+    description: "user:delete"
+  permission4:
+    description: "user:view"

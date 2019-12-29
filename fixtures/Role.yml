@@ -1,0 +1,6 @@
+entity: Role
+items:
+  role1:
+    name: "user"
+  role2:
+    name: "admin"
