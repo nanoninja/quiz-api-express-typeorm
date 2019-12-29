@@ -6,7 +6,7 @@ import {
     UpdateDateColumn,
     ManyToMany,
     JoinTable
-} from "typeorm";
+} from 'typeorm';
 
 import { IsAlpha, IsUUID } from 'class-validator';
 import { Permission } from "./Permission";
@@ -15,8 +15,7 @@ import { User } from "./User";
 @Entity()
 export class Role {
 
-    public static readonly ROLE_NOBODY = 'nobody';
-    public static readonly ROLE_USER = 'staff';
+    public static readonly ROLE_USER = 'user';
     public static readonly ROLE_ADMIN = 'admin';
 
     @IsUUID()
@@ -30,7 +29,11 @@ export class Role {
     @ManyToMany(type => User, user => user.roles)
     users: User[];
 
-    @ManyToMany(type => Permission)
+    @ManyToMany(type => Permission, permission => permission.roles, {
+        primary: true,
+        cascade: true,
+        eager: true
+    })
     @JoinTable()
     permissions: Permission[];
 

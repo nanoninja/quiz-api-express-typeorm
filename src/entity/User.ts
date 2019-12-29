@@ -57,8 +57,8 @@ export class User {
 
     @ManyToMany(type => Role, role => role.users, {
         primary: true,
-        nullable: false,
-        eager: true
+        eager: true,
+        cascade: true
     })
     @JoinTable()
     roles: Role[];

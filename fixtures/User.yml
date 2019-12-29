@@ -6,9 +6,13 @@ items:
     lastName: "Doe"
     password: "$2a$08$FyzkpmhYj5IFoiJHhfba4OOSTm4d.DRy7J3qyBDG52jYPtKtF0Le."
     isActive: 1
+    roles:
+      - "@role1"
   user2:
     email: "jane.doe@gmail.com"
     firstName: "Jane"
     lastName: "Doe"
     password: "$2a$08$FyzkpmhYj5IFoiJHhfba4OOSTm4d.DRy7J3qyBDG52jYPtKtF0Le."
     isActive: 1
+    roles:
+      - "@role2"
