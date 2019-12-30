@@ -5,3 +5,4 @@
 ``` sh
 typeorm entity:create -n Article
 ```
+

@@ -16,7 +16,9 @@ import {
     IsOptional,
     IsUUID,
     IsNotEmpty,
-    IsBoolean
+    IsBoolean,
+    IsString,
+    MinLength
 } from 'class-validator';
 import { Role } from './Role';
 
@@ -36,6 +38,8 @@ export class User {
     email: string;
 
     @IsNotEmpty()
+    @IsString()
+    @MinLength(8)
     @MaxLength(255)
     @Column()
     password: string;
@@ -58,7 +62,7 @@ export class User {
     @ManyToMany(type => Role, role => role.users, {
         primary: true,
         eager: true,
-        cascade: true
+        cascade: ['insert', 'update']
     })
     @JoinTable({ name: 'user_has_role' })
     roles: Role[];

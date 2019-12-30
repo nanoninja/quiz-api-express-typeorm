@@ -28,7 +28,7 @@ export const routes: Route[] = [
         action: getUsers,
     },
     {
-        path: '/users',
+        path: '/users/register',
         method: 'post',
         action: register,
     },

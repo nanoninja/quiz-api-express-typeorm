@@ -6,7 +6,7 @@ import { User } from '../entity/User';
 import { Role } from '../entity/Role';
 import { RoleRepository } from '../repository/RoleRepository';
 import { UserRepository } from '../repository/UserRepository';
-import { createError } from '../app/http';
+import { createError, HttpError } from '../app/http';
 
 /**
  * Authenticates user by its email.
@@ -31,7 +31,7 @@ export async function authenticate(request: Request, response: Response): Promis
     }
 
     if (!Password.verify(password, user.password)) {
-        response.status(401).json(err);
+        response.status(err.status).json(err);
         return;
     }
 
@@ -112,20 +112,24 @@ export async function register(request: Request, response: Response): Promise<vo
     const user: User = new User();
 
     user.email = body.email;
-    user.password = await Password.hash(body.password);
+    user.password = body.password;
 
     const errors: ValidationError[] = await validate(user);
     if (errors.length > 0) {
-        const err = createError(422, 'Unprocessable Entity');
+        const err = createError(400, 'Bad Request');
+        setErrorConstraints(err, errors);
+
         response.status(err.status).json(err);
         return;
     }
+
+    await Password.hash(body.password)
 
     const roleRepo: RoleRepository = getCustomRepository(RoleRepository);
     const role = await roleRepo.findByName(Role.ROLE_USER);
 
     if (!role) {
-        const err = createError(422, 'Unprocessable Entity');
+        const err = createError(500, 'Internal Server Error');
         response.status(err.status).json(err);
         return;
     }
@@ -153,7 +157,7 @@ export async function register(request: Request, response: Response): Promise<vo
 export async function removeUser(request: Request, response: Response): Promise<void> {
     const validator: Validator = new Validator();
 
-    if (!validator.isUUID(request.body.id)) {
+    if (!validator.isUUID(request.params.id)) {
         const err = createError(400, 'Bad Request', 'ID is invalid');
         response.status(err.status).json(err);
         return;
@@ -215,12 +219,7 @@ export async function updateUser(request: Request, response: Response): Promise<
 
     if (errors.length > 0) {
         const err = createError(400, 'Bad Request');
-
-        errors.forEach((error: ValidationError) => {
-            for (let [key, value] of Object.entries(error.constraints)) {
-                err.addItem(value, undefined, key);
-            }
-        });
+        setErrorConstraints(err, errors);
 
         response.status(err.status).json(err);
         return;
@@ -228,6 +227,14 @@ export async function updateUser(request: Request, response: Response): Promise<
 
     await repo.save(user);
     response.status(204).end();
+}
+
+function setErrorConstraints(err: HttpError, errors: ValidationError[]) {
+    errors.forEach((error: ValidationError) => {
+        for (let [key, value] of Object.entries(error.constraints)) {
+            err.addItem('Invalid value', value, key);
+        }
+    });
 }
 
 function hasObjectProperties(obj: any, properties: string[]): boolean {

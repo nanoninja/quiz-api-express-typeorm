@@ -2,9 +2,9 @@
 
 ## Repositories
 
-- [TypeORM Fixture Documentation](https://robinck.github.io/typeorm-fixtures/)
-- [TypeORM Github](https://github.com/RobinCK/typeorm-fixtures)
-- [TypeORM Fixture Sample](https://github.com/RobinCK/typeorm-fixtures-sample)
+* [TypeORM Fixture Documentation](https://robinck.github.io/typeorm-fixtures/)
+* [TypeORM Github](https://github.com/RobinCK/typeorm-fixtures)
+* [TypeORM Fixture Sample](https://github.com/RobinCK/typeorm-fixtures-sample)
 
 ## Commandes
 

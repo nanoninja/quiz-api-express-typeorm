@@ -15,7 +15,6 @@ createConnection()
         const app = bootstrap(routes);
 
         app.use(express.static(path.join(__dirname, 'public')));
-
         app.listen(PORT, HOST, () => {
             console.log(`[Express] is listenning on ${HOST}:${PORT}`);
         });
