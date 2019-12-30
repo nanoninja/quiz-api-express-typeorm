@@ -6,6 +6,7 @@ import { User } from '../entity/User';
 import { Role } from '../entity/Role';
 import { RoleRepository } from '../repository/RoleRepository';
 import { UserRepository } from '../repository/UserRepository';
+import { createError } from '../app/http';
 
 /**
  * Authenticates user by its email.
@@ -14,9 +15,10 @@ export async function authenticate(request: Request, response: Response): Promis
     const validator: Validator = new Validator();
     const email: string = request.body.email;
     const password: string = request.body.password;
+    const err = createError(401, 'Unauthorized', 'Authentication has failed');
 
     if (!validator.isEmail(email) || !validator.isNotEmpty(password)) {
-        response.status(400).end();
+        response.status(err.status).json(err);
         return;
     }
 
@@ -24,12 +26,12 @@ export async function authenticate(request: Request, response: Response): Promis
     const user: User | undefined = await repo.findByEmail(email);
 
     if (!user) {
-        response.status(422).end();
+        response.status(err.status).json(err);
         return;
     }
 
     if (!Password.verify(password, user.password)) {
-        response.status(422).end();
+        response.status(401).json(err);
         return;
     }
 
@@ -50,11 +52,20 @@ export async function getUsers(request: Request, response: Response) {
  * Gets a user by its email.
  */
 export async function getUserByEmail(request: Request, response: Response): Promise<void> {
+    const validator: Validator = new Validator();
+
+    if (!validator.isEmail(request.params.email)) {
+        const err = createError(400, 'Bad Request', 'Email is invalid');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User | undefined = await repo.findByEmail(request.params.email);
 
     if (!user) {
-        response.status(404).end();
+        const err = createError(404, 'Not Found', 'User was not found or does not exist');
+        response.status(err.status).json(err);
         return;
     }
 
@@ -65,11 +76,20 @@ export async function getUserByEmail(request: Request, response: Response): Prom
  * Gets a user by its id.
  */
 export async function getUserById(request: Request, response: Response): Promise<void> {
+    const validator: Validator = new Validator();
+
+    if (!validator.isUUID(request.params.id)) {
+        const err = createError(400, 'Bad Request', 'Invalid user ID');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User | undefined = await repo.findById(request.params.id);
 
     if (!user) {
-        response.status(404).end();
+        const err = createError(404, 'Not Found', 'User was not found or does not exist');
+        response.status(err.status).json(err);
         return;
     }
 
@@ -83,7 +103,8 @@ export async function register(request: Request, response: Response): Promise<vo
     const body = request.body as User;
 
     if (!hasObjectProperties(body, ['email', 'password'])) {
-        response.status(400).end();
+        const err = createError(400, 'Bad Request', 'Data format is invalid');
+        response.status(err.status).json(err);
         return;
     }
 
@@ -95,7 +116,8 @@ export async function register(request: Request, response: Response): Promise<vo
 
     const errors: ValidationError[] = await validate(user);
     if (errors.length > 0) {
-        response.status(422).json({ message: 'Unprocessable Entity', errors: errors });
+        const err = createError(422, 'Unprocessable Entity');
+        response.status(err.status).json(err);
         return;
     }
 
@@ -103,7 +125,8 @@ export async function register(request: Request, response: Response): Promise<vo
     const role = await roleRepo.findByName(Role.ROLE_USER);
 
     if (!role) {
-        response.status(422).end();
+        const err = createError(422, 'Unprocessable Entity');
+        response.status(err.status).json(err);
         return;
     }
 
@@ -112,12 +135,15 @@ export async function register(request: Request, response: Response): Promise<vo
     try {
         await repo.save(user);
         response.status(201).json(user);
-    } catch (err) {
-        if (err.code === 'ER_DUP_ENTRY') {
-            response.status(409).end();
+    } catch (error) {
+        if (error.code === 'ER_DUP_ENTRY') {
+            const err = createError(409, 'Conflict', `${body.email} is already taken`);
+            response.status(err.status).json(err);
             return;
         }
-        response.status(422).end();
+
+        const err = createError(422, 'Unprocessable Entity');
+        response.status(err.status).json(err);
     }
 }
 
@@ -125,19 +151,29 @@ export async function register(request: Request, response: Response): Promise<vo
  * Removes a user by its id.
  */
 export async function removeUser(request: Request, response: Response): Promise<void> {
+    const validator: Validator = new Validator();
+
+    if (!validator.isUUID(request.body.id)) {
+        const err = createError(400, 'Bad Request', 'ID is invalid');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const repo: UserRepository = getCustomRepository(UserRepository);
     const user: User | undefined = await repo.findById(request.params.id);
 
     if (!user) {
-        response.status(404).end();
+        const err = createError(404, 'Not Found', 'User was not found or does not exist');
+        response.status(err.status).json(err);
         return;
     }
 
     try {
         await repo.remove(user);
         response.status(204).end();
-    } catch (err) {
-        response.status(500).end();
+    } catch (error) {
+        const err = createError(500, 'Internal Server Error', 'Unable to remove user');
+        response.status(err.status).json(err);
     }
 }
 
@@ -148,19 +184,23 @@ export async function updateUser(request: Request, response: Response): Promise<
     const validator: Validator = new Validator();
 
     if (!validator.isUUID(request.body.id)) {
-        response.status(400).end();
+        const err = createError(400, 'Bad Request', 'ID is invalid');
+        response.status(err.status).json(err);
+        return;
     }
 
     const repo: UserRepository = getCustomRepository(UserRepository);
     const data: User | undefined = await repo.findById(request.body.id);
 
     if (!data) {
-        response.status(404).end();
+        const err = createError(404, 'Not Found', 'User was not found or does not exist');
+        response.status(err.status).json(err);
         return;
     }
 
     if (!hasObjectProperties(request.body, Object.getOwnPropertyNames(data))) {
-        response.status(400).end();
+        const err = createError(400, 'Bad Request', 'Data format is invalid');
+        response.status(err.status).json(err);
         return;
     }
 
@@ -172,8 +212,17 @@ export async function updateUser(request: Request, response: Response): Promise<
     user.hydrate(body);
 
     const errors: ValidationError[] = await validate(user);
+
     if (errors.length > 0) {
-        response.status(422).end();
+        const err = createError(400, 'Bad Request');
+
+        errors.forEach((error: ValidationError) => {
+            for (let [key, value] of Object.entries(error.constraints)) {
+                err.addItem(value, undefined, key);
+            }
+        });
+
+        response.status(err.status).json(err);
         return;
     }
 
