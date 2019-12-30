@@ -38,7 +38,7 @@ export class UserRepository extends AbstractRepository<User> {
      * Finds entities by ids.
      */
     async findById(id: string | number | ObjectID): Promise<User | undefined> {
-        return this.repository.findOne(id);
+        return await this.repository.findOne(id);
     }
 
     /**
@@ -52,7 +52,7 @@ export class UserRepository extends AbstractRepository<User> {
      * Creates a new entity instance.
      */
     async save(user: User): Promise<User> {
-        return this.manager.save(user);
+        return await this.manager.save(user);
     }
 
 }
