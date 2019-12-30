@@ -5,7 +5,7 @@ export interface Route {
     path: string
     method: string
     action: Function
-    middleware?: NextFunction
+    middlewares?: Function | Function[]
 }
 
 export class Router {
@@ -13,7 +13,11 @@ export class Router {
         const router = express.Router();
 
         routes.forEach((route: Route) => {
-            router[route.method](route.path, (request: Request, response: Response, next: NextFunction) => {
+            if (!route.middlewares) {
+                route.middlewares = [];
+            }
+
+            router[route.method](route.path, route.middlewares, (request: Request, response: Response, next: NextFunction) => {
                 route.action(request, response)
                     .then(() => next)
                     .catch((err: Error) => next(err));

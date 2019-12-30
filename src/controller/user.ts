@@ -6,7 +6,8 @@ import { User } from '../entity/User';
 import { Role } from '../entity/Role';
 import { RoleRepository } from '../repository/RoleRepository';
 import { UserRepository } from '../repository/UserRepository';
-import { createError, HttpError } from '../app/http';
+import { createError, HttpError } from '../app/error';
+import { JWT } from '../library/jwt';
 
 /**
  * Authenticates user by its email.
@@ -30,12 +31,20 @@ export async function authenticate(request: Request, response: Response): Promis
         return;
     }
 
-    if (!Password.verify(password, user.password)) {
+    if (!(await Password.verify(password, user.password))) {
         response.status(err.status).json(err);
         return;
     }
 
-    response.json(user);
+    await JWT.sign(user, function (error: Error, token: string) {
+        if (!err) {
+            const err = createError(500, 'Internal Server Error', 'Unable to create access token');
+            response.status(err.status).json(err);
+            return;
+        }
+
+        response.status(201).json({ access_token: token });
+    });
 }
 
 /**

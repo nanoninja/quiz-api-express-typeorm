@@ -1,5 +1,6 @@
 import { Route } from './router';
 import { hello } from '../controller';
+import { jwtVerify } from './middleware/jwt';
 
 import {
     register,
@@ -26,6 +27,7 @@ export const routes: Route[] = [
         path: '/users',
         method: 'get',
         action: getUsers,
+        middlewares: jwtVerify
     },
     {
         path: '/users/register',
@@ -40,16 +42,19 @@ export const routes: Route[] = [
     {
         path: '/users/:id',
         method: 'get',
-        action: getUserById
+        action: getUserById,
+        middlewares: jwtVerify
     },
     {
         path: '/users/:id',
         method: 'delete',
-        action: removeUser
+        action: removeUser,
+        middlewares: jwtVerify
     },
     {
         path: '/users/email/:email',
         method: 'get',
-        action: getUserByEmail
+        action: getUserByEmail,
+        middlewares: jwtVerify
     },
 ];

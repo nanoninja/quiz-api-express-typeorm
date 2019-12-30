@@ -3,22 +3,24 @@ import { User } from '../entity/User';
 
 export class JWT {
 
-    public static readonly SECRET_KEY = 'sdf34@dsf5sdrzeuoPU3BS78R?SDKLSD5df58sdf6-SDF5jkfdkjsJH';
+    /**
+     * JWT secret sign key.
+     */
+    public static readonly SECRET_KEY = 'G@pLKDD#9rty3koFwP8E%5R2qg56yu54sf@glkdsf7!g7fc714xx%$D4190NvZeqS7d1e5&sDhnCK';
 
     /**
      * Sign the given payload into a JSON Web Token string.
      */
-    async sign(user: User, callback: SignCallback) {
+    static async sign(user: User, callback: SignCallback) {
         sign(
             {
                 id: user.id,
-                email: user.email
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName
             },
             JWT.SECRET_KEY,
-            {
-                algorithm: 'HS256',
-                expiresIn: 30
-            },
+            { algorithm: 'HS256', expiresIn: 30 },
             callback
         );
     }
@@ -26,7 +28,7 @@ export class JWT {
     /**
      * Asynchronously verify given token using a secret or a public key to get a decoded token.
      */
-    async verify(token: string, callback: VerifyCallback) {
+    static async verify(token: string, callback: VerifyCallback) {
         verify(token, JWT.SECRET_KEY, callback);
     }
 }
