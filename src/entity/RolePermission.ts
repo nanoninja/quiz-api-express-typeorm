@@ -18,12 +18,14 @@ export class RolePermission {
     id: string;
 
     @ManyToOne(type => Role, user => user.rolePermissions, {
-        cascade: ['insert', 'update']
+        cascade: ['insert', 'update'],
+        primary: true,
     })
     role: Role;
 
     @ManyToOne(type => Permission, role => role.rolePermissions, {
         cascade: ['insert', 'update'],
+        primary: true,
         nullable: false
     })
     permission: Permission;

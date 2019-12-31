@@ -58,6 +58,7 @@ export class User {
 
     @OneToMany(type => UserRole, userRole => userRole.user, {
         cascade: ['insert', 'update'],
+        nullable: false,
         eager: true
     })
     userRoles: UserRole[];

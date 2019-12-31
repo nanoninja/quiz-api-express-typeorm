@@ -4,7 +4,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     PrimaryGeneratedColumn,
-    OneToMany
+    OneToMany,
 } from 'typeorm';
 
 import { IsUUID, MaxLength } from 'class-validator';
@@ -27,6 +27,7 @@ export class Permission {
 
     @OneToMany(type => RolePermission, rolePermission => rolePermission.permission, {
         cascade: ['insert', 'update'],
+        nullable: false,
         eager: true
     })
     rolePermissions: RolePermission[];

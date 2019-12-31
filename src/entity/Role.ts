@@ -49,6 +49,10 @@ export class Role {
      * Check if a permission is set.
      */
     hasPermission(operation: string): boolean {
+        if (this.rolePermissions && this.rolePermissions.length === 0) {
+            return false;
+        }
+
         return this.rolePermissions.some((rolePermission: RolePermission): boolean => {
             return rolePermission.permission.operation === operation;
         });
