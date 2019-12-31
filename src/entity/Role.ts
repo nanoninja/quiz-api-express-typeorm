@@ -4,20 +4,18 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
-    ManyToMany,
-    JoinTable
+    OneToMany
 } from 'typeorm';
 
 import { IsAlpha, IsUUID } from 'class-validator';
-import { Permission } from "./Permission";
-import { User } from "./User";
+import { UserRole } from './UserRole';
+import { RolePermission } from './RolePermission';
 
 @Entity()
 export class Role {
 
     public static readonly USER = 'user';
     public static readonly ADMIN = 'admin';
-    public static readonly EVERYONE = 'everyone';
 
     @IsUUID()
     @PrimaryGeneratedColumn('uuid')
@@ -27,16 +25,19 @@ export class Role {
     @IsAlpha()
     name: string;
 
-    @ManyToMany(type => User, user => user.roles)
-    users: User[];
-
-    @ManyToMany(type => Permission, permission => permission.roles, {
+    @OneToMany(type => UserRole, userRole => userRole.role, {
         primary: true,
-        cascade: true,
+        cascade: ['insert', 'update'],
         eager: true
     })
-    @JoinTable({ name: 'role_has_permission' })
-    permissions: Permission[];
+    userRoles: UserRole[];
+
+    @OneToMany(type => RolePermission, rolePermission => rolePermission.permission, {
+        primary: true,
+        cascade: ['insert', 'update'],
+        eager: true
+    })
+    rolePermissions: RolePermission[];
 
     @CreateDateColumn()
     createdAt: Date;
@@ -48,8 +49,8 @@ export class Role {
      * Check if a permission is set.
      */
     hasPermission(description: string): boolean {
-        return this.permissions.some((permission: Permission) => {
-            return permission.description === description;
+        return this.rolePermissions.some((rolePermission: RolePermission): boolean => {
+            return rolePermission.permission.description === description;
         });
     }
 

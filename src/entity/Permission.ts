@@ -1,6 +1,14 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import {
+    Entity,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    PrimaryGeneratedColumn,
+    OneToMany
+} from 'typeorm';
+
 import { IsAlpha, IsUUID } from 'class-validator';
-import { Role } from './Role';
+import { RolePermission } from './RolePermission';
 
 @Entity()
 export class Permission {
@@ -13,8 +21,12 @@ export class Permission {
     @IsAlpha()
     description: string;
 
-    @ManyToMany(type => Role, role => role.permissions)
-    roles: Role[];
+    @OneToMany(type => RolePermission, rolePermission => rolePermission.permission, {
+        primary: true,
+        cascade: ['insert', 'update'],
+        eager: true
+    })
+    rolePermissions: RolePermission[];
 
     @CreateDateColumn()
     createdAt: Date;

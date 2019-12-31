@@ -9,6 +9,7 @@ import { UserRepository } from '../repository/UserRepository';
 import { createError, HttpError } from '../app/error';
 import { JWT } from '../library/jwt';
 import * as httpContext from 'express-http-context';
+import { UserRole } from '../entity/UserRole';
 
 /**
  * Authenticates user by its email.
@@ -150,7 +151,11 @@ export async function register(request: Request, response: Response): Promise<vo
         return;
     }
 
-    user.roles = [role];
+    const userRole: UserRole = new UserRole();
+
+    userRole.role = role;
+    userRole.user = user;
+    user.userRoles = [userRole];
 
     try {
         await repo.save(user);

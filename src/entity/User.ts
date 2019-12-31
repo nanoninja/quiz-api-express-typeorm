@@ -4,8 +4,7 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToMany,
-    JoinTable
+    OneToMany
 } from 'typeorm';
 
 import {
@@ -20,7 +19,8 @@ import {
     IsString,
     MinLength
 } from 'class-validator';
-import { Role } from './Role';
+
+import { UserRole } from './UserRole';
 
 @Entity()
 export class User {
@@ -31,10 +31,7 @@ export class User {
     id: string;
 
     @IsEmail()
-    @Column({
-        length: 140,
-        unique: true
-    })
+    @Column({ length: 140, unique: true })
     email: string;
 
     @IsNotEmpty()
@@ -59,13 +56,11 @@ export class User {
     @Column({ default: false })
     isActive: boolean;
 
-    @ManyToMany(type => Role, role => role.users, {
-        primary: true,
-        eager: true,
-        cascade: ['insert', 'update']
+    @OneToMany(type => UserRole, userRole => userRole.user, {
+        cascade: ['insert', 'update'],
+        eager: true
     })
-    @JoinTable({ name: 'user_has_role' })
-    roles: Role[];
+    userRoles: UserRole[];
 
     @IsOptional()
     @IsDate()
@@ -81,19 +76,17 @@ export class User {
      * Check if a permission is set.
      */
     hasRole(name: string): boolean {
-        const result = this.roles.find((role: Role) => {
-            return role.name === name;
+        return this.userRoles.some((userRole: UserRole) => {
+            return userRole.role.name === name;
         });
-
-        return result !== undefined;
     }
 
     /**
      * Check if this user has a specific privilege.
      */
     hasPrivilege(permission: string): boolean {
-        return this.roles.some((role: Role) => {
-            return role.hasPermission(permission);
+        return this.userRoles.some((userRole: UserRole): boolean => {
+            return userRole.role.hasPermission(permission);
         });
     }
 
@@ -107,7 +100,7 @@ export class User {
         this.isActive = data.isActive;
         this.createdAt = data.createdAt;
         this.updatedAt = data.updatedAt;
-        this.roles = data.roles;
+        this.userRoles = data.userRoles;
 
         if (data.firstName !== '') {
             this.firstName = data.firstName;
@@ -117,4 +110,5 @@ export class User {
             this.lastName = data.lastName;
         }
     }
+
 }
