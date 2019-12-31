@@ -15,8 +15,9 @@ import { User } from "./User";
 @Entity()
 export class Role {
 
-    public static readonly ROLE_USER = 'user';
-    public static readonly ROLE_ADMIN = 'admin';
+    public static readonly USER = 'user';
+    public static readonly ADMIN = 'admin';
+    public static readonly EVERYONE = 'everyone';
 
     @IsUUID()
     @PrimaryGeneratedColumn('uuid')

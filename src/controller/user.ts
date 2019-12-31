@@ -8,6 +8,7 @@ import { RoleRepository } from '../repository/RoleRepository';
 import { UserRepository } from '../repository/UserRepository';
 import { createError, HttpError } from '../app/error';
 import { JWT } from '../library/jwt';
+import * as httpContext from 'express-http-context';
 
 /**
  * Authenticates user by its email.
@@ -51,6 +52,12 @@ export async function authenticate(request: Request, response: Response): Promis
  * Gets all users.
  */
 export async function getUsers(request: Request, response: Response) {
+    const user: User = httpContext.get('user');
+
+    if (!user.hasPrivilege('user:list')) {
+        response.status(403).json({ message: 'Forbidden' });
+    }
+
     const repo: UserRepository = getCustomRepository(UserRepository);
     const users: User[] = await repo.find();
 
@@ -132,10 +139,10 @@ export async function register(request: Request, response: Response): Promise<vo
         return;
     }
 
-    await Password.hash(body.password)
+    await Password.hash(body.password);
 
     const roleRepo: RoleRepository = getCustomRepository(RoleRepository);
-    const role = await roleRepo.findByName(Role.ROLE_USER);
+    const role = await roleRepo.findByName(Role.USER);
 
     if (!role) {
         const err = createError(500, 'Internal Server Error');
