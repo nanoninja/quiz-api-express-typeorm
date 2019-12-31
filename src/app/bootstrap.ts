@@ -20,6 +20,7 @@ export function bootstrap(routes: Route[]): express.Application {
 
     app.use(function (error: Error, request: Request, response: Response, next: NextFunction) {
         if (error) {
+            console.log('ERROR', error);
             response.status(500).json(error);
         }
     });

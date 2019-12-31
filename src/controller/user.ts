@@ -52,11 +52,13 @@ export async function authenticate(request: Request, response: Response): Promis
 /**
  * Gets all users.
  */
-export async function getUsers(request: Request, response: Response) {
+export async function getUsers(request: Request, response: Response): Promise<void> {
     const user: User = httpContext.get('user');
 
-    if (!user.hasPrivilege('user:list')) {
+    console.log(user.userRoles);
+    if (!user.hasPrivilege('UserList')) {
         response.status(403).json({ message: 'Forbidden' });
+        return;
     }
 
     const repo: UserRepository = getCustomRepository(UserRepository);

@@ -7,7 +7,7 @@ import {
     OneToMany
 } from 'typeorm';
 
-import { IsAlpha, IsUUID } from 'class-validator';
+import { IsUUID, MaxLength } from 'class-validator';
 import { RolePermission } from './RolePermission';
 
 @Entity()
@@ -17,12 +17,15 @@ export class Permission {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true, length: 80 })
-    @IsAlpha()
+    @Column({ unique: true, length: 60 })
+    @MaxLength(60)
+    operation: string;
+
+    @Column()
+    @MaxLength(255)
     description: string;
 
     @OneToMany(type => RolePermission, rolePermission => rolePermission.permission, {
-        primary: true,
         cascade: ['insert', 'update'],
         eager: true
     })

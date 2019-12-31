@@ -1,8 +1,8 @@
 entity: RolePermission
 items:
-  rolePermission{1..5}:
+  rolePermission{1..3}:
+    role: "@role2"
+    permission: "@permission($current)"
+  rolePermission{4..16}:
     role: "@role1"
     permission: "@permission($current)"
-  rolePermission6:
-    role: "@role2"
-    permission: "@permission1"

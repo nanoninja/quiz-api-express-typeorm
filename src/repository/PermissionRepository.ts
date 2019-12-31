@@ -4,10 +4,10 @@ import { Repository } from 'typeorm';
 export class PermissionRepository extends Repository<Permission> {
 
     /**
-     * Finds a permission by its description.
+     * Finds a permission by its name.
      */
-    async findRoleByName(description: string): Promise<Permission | undefined> {
-        return await this.findOne({ where: { description: description } })
+    async findRoleByName(name: string): Promise<Permission | undefined> {
+        return await this.findOne({ where: { name: name } })
     }
 
 }

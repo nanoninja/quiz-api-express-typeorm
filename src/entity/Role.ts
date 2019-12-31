@@ -14,8 +14,10 @@ import { RolePermission } from './RolePermission';
 @Entity()
 export class Role {
 
-    public static readonly USER = 'user';
-    public static readonly ADMIN = 'admin';
+    public static readonly ADMIN = 'Administrator';
+    public static readonly MANAGER = 'Manager';
+    public static readonly MEMBER = 'Member';
+    public static readonly USER = 'User';
 
     @IsUUID()
     @PrimaryGeneratedColumn('uuid')
@@ -26,14 +28,12 @@ export class Role {
     name: string;
 
     @OneToMany(type => UserRole, userRole => userRole.role, {
-        primary: true,
         cascade: ['insert', 'update'],
-        eager: true
+        nullable: false
     })
     userRoles: UserRole[];
 
     @OneToMany(type => RolePermission, rolePermission => rolePermission.permission, {
-        primary: true,
         cascade: ['insert', 'update'],
         eager: true
     })
@@ -48,9 +48,9 @@ export class Role {
     /**
      * Check if a permission is set.
      */
-    hasPermission(description: string): boolean {
+    hasPermission(operation: string): boolean {
         return this.rolePermissions.some((rolePermission: RolePermission): boolean => {
-            return rolePermission.permission.description === description;
+            return rolePermission.permission.operation === operation;
         });
     }
 

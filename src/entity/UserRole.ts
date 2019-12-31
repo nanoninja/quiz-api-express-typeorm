@@ -18,12 +18,15 @@ export class UserRole {
     id: string;
 
     @ManyToOne(type => User, user => user.userRoles, {
-        cascade: ['insert', 'update']
+        cascade: ['insert', 'update'],
+        nullable: false
     })
     user: User;
 
     @ManyToOne(type => Role, role => role.userRoles, {
-        cascade: ['insert', 'update']
+        cascade: ['insert', 'update'],
+        nullable: false,
+        eager: true
     })
     role: Role;
 

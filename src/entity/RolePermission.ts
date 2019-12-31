@@ -18,12 +18,14 @@ export class RolePermission {
     id: string;
 
     @ManyToOne(type => Role, user => user.rolePermissions, {
-        cascade: ['insert', 'update'],
-        nullable: false
+        cascade: ['insert', 'update']
     })
     role: Role;
 
-    @ManyToOne(type => Permission, role => role.rolePermissions)
+    @ManyToOne(type => Permission, role => role.rolePermissions, {
+        cascade: ['insert', 'update'],
+        nullable: false
+    })
     permission: Permission;
 
     @CreateDateColumn()

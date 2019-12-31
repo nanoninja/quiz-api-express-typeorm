@@ -1,6 +1,8 @@
 entity: UserRole
 items:
   userRole1:
+    user: "@user1"
     role: "@role1"
   userRole2:
-    role: "@role2"
+    user: "@user2"
+    role: "@role4"
