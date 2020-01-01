@@ -1,0 +1,6 @@
+entity: Category
+items:
+  category1:
+    name: "Serie TV"
+  category2:
+    name: "Culture Générale"
