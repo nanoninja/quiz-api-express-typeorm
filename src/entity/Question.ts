@@ -12,6 +12,7 @@ import { IsOptional } from 'class-validator';
 import { Category } from './Category';
 import { Choice } from './Choice';
 import { Quiz } from './Quiz';
+import { Level } from './Level';
 
 @Entity('quiz_question')
 export class Question {
@@ -31,6 +32,9 @@ export class Question {
     @IsOptional()
     @Column({ type: 'text' })
     explainAnswer: string
+
+    @ManyToOne(type => Level, level => level.questions)
+    level: Level;
 
     @ManyToOne(type => Category, category => category.questions)
     category: Category;

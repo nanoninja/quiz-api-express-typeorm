@@ -1,0 +1,10 @@
+entity: Level
+items:
+  level1:
+    name: "Facile"
+  level2:
+    name: "Intermédiaire"
+  level3:
+    name: "Avancé"
+  level4:
+    name: "Difficile"

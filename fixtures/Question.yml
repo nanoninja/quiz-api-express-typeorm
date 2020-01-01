@@ -1,8 +1,9 @@
 entity: Question
 items:
   question1:
-    type: 'input'
+    type: "choice"
     text: "Quel est le nom du Robot principal de la série Futurama"
     isVisible: true
     explainAnswer: "Le nom a été trouvé par le producteut alors qui'il était bourré dans une soirée"
+    level: "@level1"
     category: "@category1"

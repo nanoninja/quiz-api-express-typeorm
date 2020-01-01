@@ -3,6 +3,7 @@ import 'reflect-metadata';
 
 import * as path from 'path';
 import * as express from 'express';
+import * as cors from 'cors';
 import { routes } from './app/routes';
 import { bootstrap } from './app/bootstrap';
 import { createConnection, Connection } from 'typeorm';
@@ -14,6 +15,7 @@ createConnection()
     .then(async (connection: Connection) => {
         const app = await bootstrap(routes);
 
+        app.use(cors());
         app.use(express.static(path.join(__dirname, 'public')));
         app.listen(PORT, HOST, () => {
             console.log(`[Express] is listenning on ${HOST}:${PORT}`);

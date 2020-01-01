@@ -1,6 +1,6 @@
 entity: Quiz
 items:
   quiz1:
-    title: "Série TV #1"
+    title: "Demo"
     questions:
       - "@question1"

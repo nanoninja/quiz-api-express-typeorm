@@ -12,7 +12,7 @@ import { IsAlpha, IsUUID } from 'class-validator';
 import { Permission } from "./Permission";
 import { User } from "./User";
 
-@Entity()
+@Entity('user_role')
 export class Role {
 
     public static readonly ADMIN = 'Administrator';

@@ -2,7 +2,7 @@ import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedCol
 import { IsUUID } from 'class-validator';
 import { Role } from './Role';
 
-@Entity()
+@Entity('user_permission')
 export class Permission {
 
     @IsUUID()
