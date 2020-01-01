@@ -51,11 +51,11 @@ export async function authenticate(request: Request, response: Response): Promis
 /**
  * Gets all users.
  */
-export async function getUsers(request: Request, response: Response) {
-    const user: User = httpContext.get('user');
-
-    if (!user.hasPrivilege('user:list')) {
-        response.status(403).json({ message: 'Forbidden' });
+export async function getUsers(request: Request, response: Response): Promise<void> {
+    if (!httpContext.get('user').hasPrivilege('UserList')) {
+        const err = createError(403, 'Forbidden', 'Privilege not Allowed');
+        response.status(err.status).json(err);
+        return;
     }
 
     const repo: UserRepository = getCustomRepository(UserRepository);
@@ -68,6 +68,12 @@ export async function getUsers(request: Request, response: Response) {
  * Gets a user by its email.
  */
 export async function getUserByEmail(request: Request, response: Response): Promise<void> {
+    if (!httpContext.get('user').hasPrivilege('UserView')) {
+        const err = createError(403, 'Forbidden', 'Privilege not Allowed');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const validator: Validator = new Validator();
 
     if (!validator.isEmail(request.params.email)) {
@@ -92,6 +98,12 @@ export async function getUserByEmail(request: Request, response: Response): Prom
  * Gets a user by its id.
  */
 export async function getUserById(request: Request, response: Response): Promise<void> {
+    if (!httpContext.get('user').hasPrivilege('UserView')) {
+        const err = createError(403, 'Forbidden', 'Privilege not Allowed');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const validator: Validator = new Validator();
 
     if (!validator.isUUID(request.params.id)) {
@@ -171,6 +183,14 @@ export async function register(request: Request, response: Response): Promise<vo
  * Removes a user by its id.
  */
 export async function removeUser(request: Request, response: Response): Promise<void> {
+    const owner: User = httpContext.get('user');
+
+    if (!owner.hasPrivilege('UserDelete')) {
+        const err = createError(403, 'Forbidden', 'Privilege not Allowed');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const validator: Validator = new Validator();
 
     if (!validator.isUUID(request.params.id)) {
@@ -188,6 +208,12 @@ export async function removeUser(request: Request, response: Response): Promise<
         return;
     }
 
+    if (owner.id === user.id) {
+        const err = createError(401, 'Unauthorized', 'Unable to delete your own user');
+        response.status(err.status).json(err);
+        return;
+    }
+
     try {
         await repo.remove(user);
         response.status(204).end();
@@ -201,6 +227,12 @@ export async function removeUser(request: Request, response: Response): Promise<
  * Updates user entity.
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
+    if (!httpContext.get('user').hasPrivilege('UserEdit')) {
+        const err = createError(403, 'Forbidden', 'Privilege not Allowed');
+        response.status(err.status).json(err);
+        return;
+    }
+
     const validator: Validator = new Validator();
 
     if (!validator.isUUID(request.body.id)) {

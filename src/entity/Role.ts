@@ -15,9 +15,10 @@ import { User } from "./User";
 @Entity()
 export class Role {
 
-    public static readonly USER = 'user';
-    public static readonly ADMIN = 'admin';
-    public static readonly EVERYONE = 'everyone';
+    public static readonly ADMIN = 'Administrator';
+    public static readonly USER = 'User';
+    public static readonly MANAGER = 'Manager';
+    public static readonly MEMBER = 'Member';
 
     @IsUUID()
     @PrimaryGeneratedColumn('uuid')
@@ -35,7 +36,7 @@ export class Role {
         cascade: true,
         eager: true
     })
-    @JoinTable({ name: 'role_has_permission' })
+    @JoinTable({ name: 'role_permission' })
     permissions: Permission[];
 
     @CreateDateColumn()
@@ -47,9 +48,9 @@ export class Role {
     /**
      * Check if a permission is set.
      */
-    hasPermission(description: string): boolean {
+    hasPermission(operation: string): boolean {
         return this.permissions.some((permission: Permission) => {
-            return permission.description === description;
+            return permission.operation === operation;
         });
     }
 

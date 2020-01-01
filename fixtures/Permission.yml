@@ -1,12 +1,57 @@
 entity: Permission
 items:
+  # Account
   permission1:
-    description: "user:add"
+    operation: "AccountView"
+    description: "View account"
   permission2:
-    description: "user:edit"
+    operation: "AccountEdit"
+    description: "Edit account"
   permission3:
-    description: "user:delete"
+    operation: "AccountEditPassword"
+    description: "Edit password account"
+
+  # Permissions
   permission4:
-    description: "user:list"
+    operation: "PermissionCreate"
+    description: "Create a new role"
   permission5:
-    description: "user:view"
+    operation: "PermissionDelete"
+    description: "Delete permission"
+  permission6:
+    operation: "PermissionEdit"
+    description: "Edit permission"
+  permission7:
+    operation: "PermissionList"
+    description: "List permissions"
+
+  # Roles
+  permission8:
+    operation: "CreateRole"
+    description: "Create a new role"
+  permission9:
+    operation: "RoleDelete"
+    description: "Delete role"
+  permission10:
+    operation: "RoleEdit"
+    description: "Edit role"
+  permission11:
+    operation: "RoleList"
+    description: "List roles"
+
+  # Users
+  permission12:
+    operation: "UserCreate"
+    description: "Create a new user"
+  permission13:
+    operation: "UserEdit"
+    description: "Edit a user"
+  permission14:
+    operation: "UserDelete"
+    description: "Delete a user"
+  permission15:
+    operation: "UserList"
+    description: "List users"
+  permission16:
+    operation: "UserView"
+    description: "View user"

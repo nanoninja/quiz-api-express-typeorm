@@ -60,11 +60,11 @@ export class User {
     isActive: boolean;
 
     @ManyToMany(type => Role, role => role.users, {
+        cascade: ['insert', 'update'],
         primary: true,
         eager: true,
-        cascade: ['insert', 'update']
     })
-    @JoinTable({ name: 'user_has_role' })
+    @JoinTable({ name: 'user_role' })
     roles: Role[];
 
     @IsOptional()
@@ -91,9 +91,9 @@ export class User {
     /**
      * Check if this user has a specific privilege.
      */
-    hasPrivilege(permission: string): boolean {
+    hasPrivilege(operation: string): boolean {
         return this.roles.some((role: Role) => {
-            return role.hasPermission(permission);
+            return role.hasPermission(operation);
         });
     }
 

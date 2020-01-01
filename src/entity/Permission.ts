@@ -1,5 +1,5 @@
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
-import { IsAlpha, IsUUID } from 'class-validator';
+import { IsUUID } from 'class-validator';
 import { Role } from './Role';
 
 @Entity()
@@ -10,7 +10,9 @@ export class Permission {
     id: string;
 
     @Column({ unique: true, length: 80 })
-    @IsAlpha()
+    operation: string;
+
+    @Column({ length: 255 })
     description: string;
 
     @ManyToMany(type => Role, role => role.permissions)

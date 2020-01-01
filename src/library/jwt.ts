@@ -20,7 +20,7 @@ export class JWT {
                 lastName: user.lastName
             },
             JWT.SECRET_KEY,
-            { algorithm: 'HS256', expiresIn: 30 },
+            { algorithm: 'HS256', expiresIn: 240 },
             callback
         );
     }

@@ -1,11 +1,42 @@
 entity: Role
 items:
   role1:
-    name: "admin"
+    name: "Administrator"
+    permissions:
+      - "@permission4"
+      - "@permission5"
+      - "@permission6"
+      - "@permission7"
+      - "@permission8"
+      - "@permission9"
+      - "@permission10"
+      - "@permission11"
+      - "@permission12"
+      - "@permission13"
+      - "@permission14"
+      - "@permission15"
+      - "@permission16"
+  role2:
+    name: "Manager"
+    permissions:
+      - "@permission4"
+      - "@permission5"
+      - "@permission6"
+      - "@permission7"
+      - "@permission8"
+      - "@permission9"
+      - "@permission10"
+      - "@permission11"
+      - "@permission12"
+  role3:
+    name: "Member"
     permissions:
       - "@permission1"
       - "@permission2"
       - "@permission3"
-      - "@permission4"
-  role2:
-    name: "user"
+  role4:
+    name: "User"
+    permissions:
+      - "@permission1"
+      - "@permission2"
+      - "@permission3"
