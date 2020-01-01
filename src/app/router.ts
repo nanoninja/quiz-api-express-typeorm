@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
+import * as httpContext from 'express-http-context';
 
 export interface Route {
     path: string
@@ -9,15 +10,16 @@ export interface Route {
 }
 
 export class Router {
-    load(routes: Route[]): express.Router {
+    async load(routes: Route[]): Promise<express.Router> {
         const router = express.Router();
+        router.use(httpContext.middleware);
 
-        routes.forEach((route: Route) => {
+        routes.forEach(async (route: Route): Promise<void> => {
             if (!route.middlewares) {
                 route.middlewares = [];
             }
 
-            router[route.method](route.path, route.middlewares, (request: Request, response: Response, next: NextFunction) => {
+            router[route.method](route.path, route.middlewares, async (request: Request, response: Response, next: NextFunction): Promise<void> => {
                 route.action(request, response)
                     .then(() => next)
                     .catch((err: Error) => next(err));

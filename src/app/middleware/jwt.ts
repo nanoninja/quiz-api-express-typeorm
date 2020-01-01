@@ -6,7 +6,7 @@ import { User } from '../../entity/User';
 import { getCustomRepository } from 'typeorm';
 import { UserRepository } from '../../repository/UserRepository';
 
-export async function jwtVerify(request: Request, response: Response, next: NextFunction): Promise<void> {
+export function jwtVerify(request: Request, response: Response, next: NextFunction) {
     const authorisation: string | undefined = request.header('Authorization');
 
     if (!authorisation) {
@@ -17,8 +17,8 @@ export async function jwtVerify(request: Request, response: Response, next: Next
 
     const token: string = authorisation.substr('Bearer '.length);
 
-    JWT.verify(token, async (err: Error, encoded: { [key: string]: any } | string) => {
-        if (err) {
+    JWT.verify(token, async (error: Error, encoded: { [key: string]: any } | string) => {
+        if (error) {
             const err = createError(401, 'Unauthorized');
             response.status(err.status).json(err);
             return;
@@ -29,9 +29,9 @@ export async function jwtVerify(request: Request, response: Response, next: Next
             response.status(err.status).json(err);
             return;
         }
- 
+
         const repo: UserRepository = getCustomRepository(UserRepository);
-        const user: User | undefined = await repo.findById(encoded.id);
+        const user: User | undefined = await repo.findOne(encoded.id);
 
         if (!user) {
             const err = createError(401, 'Unauthorized');

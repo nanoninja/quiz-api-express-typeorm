@@ -1,26 +1,23 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as httpContext from 'express-http-context';
-import * as uuidv4 from 'uuid/v4';
 import { Request, Response, NextFunction } from 'express';
 import { Route, Router } from './router';
+import { createError } from './error';
 
-export function bootstrap(routes: Route[]): express.Application {
+export async function bootstrap(routes: Route[]): Promise<express.Application> {
     const app = express();
 
     app.use(httpContext.middleware);
-    app.use((request: Request, response: Response, next: NextFunction) => {
-        httpContext.set('request:id', uuidv4());
-        next();
-    });
-
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
-    app.use(new Router().load(routes));
+    app.use(await (new Router().load(routes)));
 
-    app.use(function (error: Error, request: Request, response: Response, next: NextFunction) {
+    app.use(async (error: Error, request: Request, response: Response, next: NextFunction): Promise<void> => {
         if (error) {
-            response.status(500).json(error);
+            const err = createError(500, 'Internal Server Error');
+            response.status(err.status).json(err);
+            return;
         }
     });
 

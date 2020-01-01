@@ -24,20 +24,21 @@ export const routes: Route[] = [
         action: authenticate
     },
     {
+        path: '/users/register',
+        method: 'post',
+        action: register
+    },
+    {
         path: '/users',
         method: 'get',
         action: getUsers,
         middlewares: jwtVerify
     },
     {
-        path: '/users/register',
-        method: 'post',
-        action: register,
-    },
-    {
         path: '/users',
         method: 'put',
-        action: updateUser
+        action: updateUser,
+        middlewares: jwtVerify
     },
     {
         path: '/users/:id',

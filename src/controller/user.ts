@@ -113,7 +113,7 @@ export async function getUserById(request: Request, response: Response): Promise
     }
 
     const repo: UserRepository = getCustomRepository(UserRepository);
-    const user: User | undefined = await repo.findById(request.params.id);
+    const user: User | undefined = await repo.findOne(request.params.id);
 
     if (!user) {
         const err = createError(404, 'Not Found', 'User was not found or does not exist');
@@ -200,7 +200,7 @@ export async function removeUser(request: Request, response: Response): Promise<
     }
 
     const repo: UserRepository = getCustomRepository(UserRepository);
-    const user: User | undefined = await repo.findById(request.params.id);
+    const user: User | undefined = await repo.findOne(request.params.id);
 
     if (!user) {
         const err = createError(404, 'Not Found', 'User was not found or does not exist');
@@ -227,7 +227,8 @@ export async function removeUser(request: Request, response: Response): Promise<
  * Updates user entity.
  */
 export async function updateUser(request: Request, response: Response): Promise<void> {
-    if (!httpContext.get('user').hasPrivilege('UserEdit')) {
+    const owner: User = await httpContext.get('user');
+    if (!owner.hasPrivilege('UserEdit')) {
         const err = createError(403, 'Forbidden', 'Privilege not Allowed');
         response.status(err.status).json(err);
         return;
@@ -242,7 +243,7 @@ export async function updateUser(request: Request, response: Response): Promise<
     }
 
     const repo: UserRepository = getCustomRepository(UserRepository);
-    const data: User | undefined = await repo.findById(request.body.id);
+    const data: User | undefined = await repo.findOne(request.body.id);
 
     if (!data) {
         const err = createError(404, 'Not Found', 'User was not found or does not exist');
@@ -266,15 +267,19 @@ export async function updateUser(request: Request, response: Response): Promise<
     const errors: ValidationError[] = await validate(user);
 
     if (errors.length > 0) {
-        const err = createError(400, 'Bad Request');
+        const err = createError(400, 'Bad Request', 'Data format is invalid');
         setErrorConstraints(err, errors);
 
         response.status(err.status).json(err);
         return;
     }
 
-    await repo.save(user);
-    response.status(204).end();
+    try {
+        await repo.save(user);
+        response.status(204).end();
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 function setErrorConstraints(err: HttpError, errors: ValidationError[]) {

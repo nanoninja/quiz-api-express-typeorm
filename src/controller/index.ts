@@ -1,8 +1,5 @@
-import {
-    Request,
-    Response,
-} from 'express';
+import { Request, Response } from 'express';
 
-export async function hello(request: Request, response: Response) {
+export async function hello(request: Request, response: Response): Promise<void> {
     response.json({ message: 'Hello, World!' })
 }

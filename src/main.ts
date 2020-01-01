@@ -12,7 +12,7 @@ const HOST = String(process.env.HOST);
 
 createConnection()
     .then(async (connection: Connection) => {
-        const app = bootstrap(routes);
+        const app = await bootstrap(routes);
 
         app.use(express.static(path.join(__dirname, 'public')));
         app.listen(PORT, HOST, () => {
