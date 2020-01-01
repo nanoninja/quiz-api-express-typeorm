@@ -64,7 +64,7 @@ export class User {
         primary: true,
         eager: true,
     })
-    @JoinTable({ name: 'user_role' })
+    @JoinTable({ name: 'user_has_role' })
     roles: Role[];
 
     @IsOptional()

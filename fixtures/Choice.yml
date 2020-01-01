@@ -1,0 +1,14 @@
+entity: Choice
+items:
+  item1:
+    text: "Robocop"
+    question: "@question1"
+    isCorrect: false
+  item2:
+    text: "Bender"
+    question: "@question1"
+    isCorrect: true
+  item3:
+    text: "Astro"
+    question: "@question1"
+    isCorrect: false

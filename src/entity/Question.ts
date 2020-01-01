@@ -4,13 +4,16 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToOne
+    ManyToOne,
+    OneToMany
 } from 'typeorm';
 
 import { IsOptional } from 'class-validator';
 import { Category } from './Category';
+import { Choice } from './Choice';
+import { Quiz } from './Quiz';
 
-@Entity()
+@Entity('quiz_question')
 export class Question {
 
     @PrimaryGeneratedColumn('uuid')
@@ -31,6 +34,12 @@ export class Question {
 
     @ManyToOne(type => Category, category => category.questions)
     category: Category;
+
+    @ManyToOne(type => Quiz, quiz => quiz.questions)
+    quiz: Quiz;
+
+    @OneToMany(type => Choice, choice => choice.question)
+    choices: Choice[];
 
     @CreateDateColumn()
     createdAt: Date;

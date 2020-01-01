@@ -2,7 +2,7 @@ entity: Question
 items:
   question1:
     type: 'input'
-    text: "Quel est le nom du Robot de la série Futurama"
+    text: "Quel est le nom du Robot principal de la série Futurama"
     isVisible: true
     explainAnswer: "Le nom a été trouvé par le producteut alors qui'il était bourré dans une soirée"
     category: "@category1"

@@ -1,31 +1,30 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
     UpdateDateColumn,
     OneToMany
 } from 'typeorm';
 
 import { Question } from './Question';
 
-@Entity('quiz_question_category')
-export class Category {
+@Entity()
+export class Quiz {
 
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ unique: true })
-    name: string;
+    @Column()
+    title: string;
 
-    // One Category (self) for many questions
-    @OneToMany(type => Question, question => question.category)
+    @OneToMany(type => Question, question => question.quiz)
     questions: Question[];
 
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updaterAt: Date;
 
 }
