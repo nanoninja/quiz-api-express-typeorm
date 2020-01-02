@@ -1,0 +1,21 @@
+version: "3"
+services:
+  node:
+    image: "node:10"
+    user: "node"
+    depends_on:
+      - "mysqldb"
+    working_dir: /home/node/app
+    networks:
+      backend:
+        aliases:
+          - datastore
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./:/home/node/app
+    expose:
+      - "3000"
+    ports:
+      - "9090:8080"
+    command: "npm run dev"

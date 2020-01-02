@@ -1,5 +1,5 @@
-FROM node
+FROM node:10
 
 LABEL maintainer="Vincent Letourneau<vincent@nanoninja.com>"
 
-CMD ["node", "main.js"]
+EXPOSE 3000
