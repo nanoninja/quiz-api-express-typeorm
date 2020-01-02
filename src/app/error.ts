@@ -12,15 +12,18 @@ export class DomainError extends Error {
 }
 
 export class NotFoundError extends DomainError {
-    constructor(resource: string) {
+    constructor(resource: string, reason?: string) {
         super(`Resource ${resource} was not found`);
+
         this.code = 404;
+        this.reason = reason;
     }
 }
 
 export class BadRequestError extends DomainError {
     constructor(reason?: string, data?: {}) {
         super('Bad Request');
+
         this.code = 404;
         this.reason = reason;
         this.data = data;
