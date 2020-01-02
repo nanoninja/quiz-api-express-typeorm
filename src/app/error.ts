@@ -1,46 +1,72 @@
-export interface ErrorItem {
-    message: string;
-    reason?: string;
-    domain?: string;
-}
+export class DomainError extends Error {
+    public reason?: string;
+    public code: number = 200;
+    public data?: {};
 
-export interface ErrorHandler {
-    status: number;
-    message: string;
-    type?: string;
-    description?: string;
-    errors?: ErrorItem[];
-}
+    constructor(message: string) {
+        super(message);
 
-export class HttpError implements ErrorHandler {
-    status: number = 200;
-    message: string;
-    type?: string;
-    description?: string;
-    errors?: ErrorItem[];
-
-    constructor(status: number, message: string, description?: string) {
-        this.status = status;
-        this.message = message;
-        this.description = description;
+        this.name = this.constructor.name;
+        Error.captureStackTrace(this, this.constructor);
     }
-
-    addItem(message: string, reason?: string, domain?: string): HttpError {
-        if (!this.errors) {
-            this.errors = [];
-        }
-
-        this.errors.push({
-            message: message,
-            reason: reason,
-            domain: domain
-        });
-
-        return this;
-    }
-
 }
 
-export function createError(status: number, msg: string, description?: string): HttpError {
-    return new HttpError(status, msg, description);
+export class NotFoundError extends DomainError {
+    constructor(resource: string) {
+        super(`Resource ${resource} was not found`);
+        this.code = 404;
+    }
+}
+
+export class BadRequestError extends DomainError {
+    constructor(reason?: string, data?: {}) {
+        super('Bad Request');
+        this.code = 404;
+        this.reason = reason;
+        this.data = data;
+    }
+}
+
+export class ConflictError extends DomainError {
+    constructor(reason?: string) {
+        super('Forbidden');
+
+        this.code = 409;
+        this.reason = reason;
+    }
+}
+
+export class ForbidenError extends DomainError {
+    constructor(reason?: string) {
+        super('Forbidden');
+
+        this.code = 403;
+        this.reason = reason;
+    }
+}
+
+export class InternalError extends DomainError {
+    constructor(reason?: string) {
+        super('Internal Server Error');
+
+        this.code = 500;
+        this.reason = reason;
+    }
+}
+
+export class UnauthorizedError extends DomainError {
+    constructor(reason?: string) {
+        super('Unauthorized');
+
+        this.code = 401;
+        this.reason = reason;
+    }
+}
+
+export class UnprocessableEntity extends DomainError {
+    constructor(message: string = 'Unprocessable Entity') {
+        super(message);
+
+        this.code = 422;
+    }
 }

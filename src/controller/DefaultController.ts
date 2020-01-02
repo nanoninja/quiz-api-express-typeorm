@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
+import { BaseController } from './BaseController';
 
-export class DefaultController {
+export class DefaultController extends BaseController {
 
     async hello(request: Request, response: Response) {
-        response.json({ message: 'Hello, World!' });
+        return { message: 'Hello, World' };
     }
 
 }

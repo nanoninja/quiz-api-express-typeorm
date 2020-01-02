@@ -8,8 +8,9 @@ import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 
 import { createConnection, Connection } from 'typeorm';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { routes, Route } from './routes';
+import { DomainError } from './app/error';
 
 const PORT = Number(process.env.PORT);
 const HOST = String(process.env.HOST);
@@ -20,27 +21,35 @@ createConnection().then(async (connection: Connection) => {
     const app = express();
 
     app.use(cors());
-    app.use(httpContext.middleware);
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
+
+    // Important: Add the http context after the bodyParser middleware.
+    app.use(httpContext.middleware);
     app.use(express.static(path.join(__dirname, 'public')));
 
     // Register express routes from defined application routes.
     routes.forEach((route: Route) => {
-        if (!route.middlewares) {
-            route.middlewares = [];
-        }
+        const middlewares = route.middlewares || [];
 
-        (app as any)[route.method](route.route, route.middlewares, (request: Request, response: Response, next: Function) => {
+        (app as any)[route.method](route.route, middlewares, (request: Request, response: Response, next: NextFunction) => {
             const result = (new (route.controller as any))[route.action](request, response, next);
 
             if (result instanceof Promise) {
-                result.then(result => result !== null && result !== undefined ? response.send(result) : undefined);
+                result.then(result => result !== null && result !== undefined ? response.send(result) : undefined)
+                    .catch(error => error instanceof DomainError ? response.status(error.code).json(error) : response.json(error));
             } else if (result !== null && result !== undefined) {
                 response.json(result);
             }
 
         });
+    });
+
+    app.use((error: Error | DomainError, request: Request, response: Response, next: NextFunction) => {
+        if (error instanceof DomainError) {
+            response.status(error.code);
+        }
+        response.json(error);
     });
 
     app.listen(PORT, HOST, () => {
