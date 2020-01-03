@@ -42,7 +42,7 @@ routes.forEach((route: Route) => {
     });
 });
 
-app.use(async (error: Error | DomainError, request: Request, response: Response, next: NextFunction) => {
+app.use((error: Error | DomainError, request: Request, response: Response, next: NextFunction) => {
     if (error instanceof DomainError) {
         response.status(error.code);
     }

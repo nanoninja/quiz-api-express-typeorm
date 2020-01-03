@@ -12,6 +12,8 @@ services:
           - datastore
     environment:
       - NODE_ENV=production
+      - PORT=8080
+      - HOST=0.0.0.0
     volumes:
       - ./:/home/node/app
     expose:
