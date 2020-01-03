@@ -12,8 +12,8 @@ import { Request, Response, NextFunction } from 'express';
 import { routes, Route } from './routes';
 import { DomainError } from './app/error';
 
-const PORT = Number(process.env.PORT);
-const HOST = String(process.env.HOST);
+const PORT = Number(process.env.PORT || 300);
+const HOST = String(process.env.HOST || 'localhost');
 
 createConnection().then(async (connection: Connection) => {
 
