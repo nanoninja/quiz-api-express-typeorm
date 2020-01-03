@@ -26,7 +26,7 @@ export class UserController extends BaseController {
         const password: string = request.body.password;
 
         if (!validator.isEmail(email) || !validator.isNotEmpty(password)) {
-            throw new NotFoundError('Authentication has failed');
+            throw new BadRequestError('Authentication has failed');
         }
 
         const user: User | undefined = await this.userRepository.findByEmail(email);
@@ -115,7 +115,7 @@ export class UserController extends BaseController {
             throw new BadRequestError('Input error', errors);
         }
 
-        await Password.hash(body.password);
+        user.password = await Password.hash(body.password);
 
         const roleRepo: RoleRepository = getCustomRepository(RoleRepository);
         const role = await roleRepo.findByName(Role.USER);
@@ -127,6 +127,7 @@ export class UserController extends BaseController {
         user.roles = [role];
 
         try {
+            response.status(201);
             return await this.userRepository.save(user);
         } catch (error) {
             if (error.code === 'ER_DUP_ENTRY') {

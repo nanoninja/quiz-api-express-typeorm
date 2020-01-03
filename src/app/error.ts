@@ -24,7 +24,7 @@ export class BadRequestError extends DomainError {
     constructor(reason?: string, data?: {}) {
         super('Bad Request');
 
-        this.code = 404;
+        this.code = 400;
         this.reason = reason;
         this.data = data;
     }
