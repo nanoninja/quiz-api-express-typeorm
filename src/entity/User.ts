@@ -20,6 +20,7 @@ import {
     IsString,
     MinLength
 } from 'class-validator';
+
 import { Role } from './Role';
 
 @Entity()
@@ -62,7 +63,7 @@ export class User {
     @ManyToMany(type => Role, role => role.users, {
         cascade: ['insert', 'update'],
         primary: true,
-        eager: true,
+        eager: true
     })
     @JoinTable({ name: 'user_has_role' })
     roles: Role[];

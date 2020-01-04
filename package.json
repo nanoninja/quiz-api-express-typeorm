@@ -6,7 +6,7 @@
       "start": "ts-node src/main.ts",
       "dev": "nodemon",
       "fixtures": "fixtures ./fixtures --config ormconfig.json --sync --require=ts-node/register --require=ts-node/register",
-      "test": "mocha --watch --require ts-node/register --watch-extensions ts test/**/*.spec.ts"
+      "test": "npm run fixtures && mocha --watch --require ts-node/register --watch-extensions ts test/**/*.spec.ts"
    },
    "devDependencies": {
       "@types/chai": "^4.2.7",
