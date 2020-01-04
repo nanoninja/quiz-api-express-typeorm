@@ -1,4 +1,3 @@
-import './app/env';
 import 'reflect-metadata';
 
 import * as path from 'path';

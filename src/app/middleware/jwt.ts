@@ -40,5 +40,4 @@ export async function jwtVerify(request: Request, response: Response, next: Next
     } catch (error) {
         next(error);
     }
-
 }

@@ -15,7 +15,7 @@ Run `npm run test` command
 ## Installing dependencies
 
 ``` sh
-npm i bcryptjs body-parser class-validator cors dotenv express \
+npm i bcryptjs body-parser class-validator cors express \
 express-http-context jsonwebtoken mongodb mysql mysql2 pg \
 reflect-metadata typeorm uuid
 ```
