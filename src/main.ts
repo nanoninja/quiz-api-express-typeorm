@@ -47,6 +47,8 @@ app.use((error: Error | DomainError, request: Request, response: Response, next:
     } else {
         response.json(error);
     }
+
+    next();
 });
 
 module.exports = app.listen(PORT, HOST, async () => {

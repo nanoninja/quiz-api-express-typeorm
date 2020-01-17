@@ -1,23 +1,23 @@
 version: "3"
 services:
   node:
-    image: "node:10"
+    image: "node"
     user: "node"
+    restart: always
     depends_on:
       - "mysqldb"
-    working_dir: /home/node/app
+      - "phpmyadmin"
+    working_dir: /usr/src/app
     networks:
-      backend:
-        aliases:
-          - datastore
+      - backend
     environment:
       - NODE_ENV=production
-      - PORT=8080
+      - PORT=3000
       - HOST=0.0.0.0
     volumes:
-      - ./:/home/node/app
+      - ./:/usr/src/app
     expose:
-      - "3000"
+      - 3000
     ports:
-      - "9090:8080"
-    command: "npm run dev"
+      - 9090:3000
+    command: bash -c "npm run fixtures && npm run dev"

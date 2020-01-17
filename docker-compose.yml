@@ -9,9 +9,7 @@ services:
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=admin
     networks:
-      backend:
-        aliases:
-          - datastore
+      - backend
     ports:
       - 3306:3306
     volumes:
@@ -26,7 +24,7 @@ services:
       - backend
     environment:
       #- PMA_ARBITRARY=1
-      - PMA_HOST=datastore
+      - PMA_HOST=mysqldb
     restart: always
     depends_on:
       - mysqldb
