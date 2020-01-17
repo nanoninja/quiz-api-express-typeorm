@@ -44,11 +44,8 @@ routes.forEach((route: Route) => {
 app.use((error: Error | DomainError, request: Request, response: Response, next: NextFunction) => {
     if (error instanceof DomainError) {
         response.status(error.code);
-    } else {
-        response.json(error);
     }
-
-    next();
+    response.json(error);
 });
 
 module.exports = app.listen(PORT, HOST, async () => {

@@ -13,7 +13,7 @@
       "@types/chai-http": "^4.2.0",
       "@types/cors": "^2.8.6",
       "@types/express": "^4.17.2",
-      "@types/jsonwebtoken": "^8.3.5",
+      "@types/jsonwebtoken": "^8.3.6",
       "@types/mocha": "^5.2.7",
       "@types/node": "^8.10.59",
       "chai": "^4.2.0",
@@ -31,12 +31,12 @@
       "express": "^4.17.1",
       "express-http-context": "^1.2.3",
       "jsonwebtoken": "^8.5.1",
-      "mongodb": "^3.4.1",
+      "mongodb": "^3.5.0",
       "mysql": "^2.17.1",
       "mysql2": "^2.1.0",
-      "pg": "^7.17.0",
+      "pg": "^7.17.1",
       "reflect-metadata": "^0.1.13",
       "typeorm": "^0.2.22",
-      "uuid": "^3.3.3"
+      "uuid": "^3.4.0"
    }
 }

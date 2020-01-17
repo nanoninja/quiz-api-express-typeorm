@@ -1,7 +1,7 @@
 version: "3"
 services:
   node:
-    image: "node"
+    image: "node:alpine"
     user: "node"
     restart: always
     depends_on:
@@ -20,4 +20,4 @@ services:
       - 3000
     ports:
       - 9090:3000
-    command: bash -c "npm run fixtures && npm run dev"
+    command: sh -c "sleep 3 && npm run fixtures && npm run dev"
