@@ -13,19 +13,14 @@ import { DomainError } from './app/error';
 
 const PORT = Number(process.env.PORT || 3000);
 const HOST = String(process.env.HOST || 'localhost');
-
-// Create express app.
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// Important: Add the http context after the bodyParser middleware.
 app.use(httpContext.middleware);
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Register express routes from defined application routes.
 routes.forEach((route: Route) => {
     const middlewares = route.middlewares || [];
 
