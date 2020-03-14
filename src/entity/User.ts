@@ -22,6 +22,7 @@ import {
 } from 'class-validator';
 
 import { Role } from './Role';
+import { Password } from '../library/password';
 
 @Entity()
 export class User {
@@ -79,7 +80,20 @@ export class User {
     updatedAt: Date;
 
     /**
-     * Check if a permission is set.
+     * Sets and hashes password.
+     *
+     * @param {string} password
+     * @return {void}
+     */
+    setPassword(password: string): void {
+        this.password = Password.hash(password);
+    }
+
+    /**
+     * Checks if a permission is set.
+     *
+     * @param {string} name
+     * @return {boolean}
      */
     hasRole(name: string): boolean {
         const result = this.roles.find((role: Role) => {
@@ -91,6 +105,9 @@ export class User {
 
     /**
      * Check if this user has a specific privilege.
+     *
+     * @param {string} operation
+     * @return {boolean}
      */
     hasPrivilege(operation: string): boolean {
         return this.roles.some((role: Role) => {
@@ -100,8 +117,11 @@ export class User {
 
     /**
      * Hydrates this user from data.
+     *
+     * @param {User} data
+     * @return {void}
      */
-    hydrate(data: User) {
+    hydrate(data: User): void {
         this.id = data.id;
         this.email = data.email;
         this.password = data.password;
@@ -109,6 +129,10 @@ export class User {
         this.createdAt = data.createdAt;
         this.updatedAt = data.updatedAt;
         this.roles = data.roles;
+
+        if (data.password) {
+            this.setPassword(data.password);
+        }
 
         if (data.firstName !== '') {
             this.firstName = data.firstName;

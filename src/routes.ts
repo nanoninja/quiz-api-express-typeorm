@@ -1,4 +1,4 @@
-import { jwtVerify } from './app/middleware/jwt';
+import { jwtVerify } from './app/middleware/jwt.middleware';
 import { DefaultController } from './controller/DefaultController';
 import { UserController } from './controller/UserController';
 

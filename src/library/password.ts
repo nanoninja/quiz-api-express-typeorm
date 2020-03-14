@@ -1,13 +1,11 @@
 import * as bcrypt from 'bcryptjs';
 
 export class Password {
-
-    static async hash(value: string): Promise<string> {
-        return await bcrypt.hashSync(value, 8);
+    static hash(value: string, cost: number = 8) {
+        return bcrypt.hashSync(value, cost);
     }
 
-    static async verify(value: string, hash: string): Promise<boolean> {
-        return await bcrypt.compare(value, hash);
+    static verify(value: string, hash: string) {
+        return bcrypt.compareSync(value, hash);
     }
-
 }

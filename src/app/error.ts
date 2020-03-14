@@ -1,6 +1,6 @@
 export class DomainError extends Error {
     public reason?: string;
-    public code: number = 200;
+    public status: number = 200;
     public data?: {};
 
     constructor(message: string) {
@@ -15,16 +15,17 @@ export class NotFoundError extends DomainError {
     constructor(resource: string, reason?: string) {
         super(`Resource ${resource} was not found`);
 
-        this.code = 404;
+        this.status = 404;
         this.reason = reason;
     }
 }
+
 
 export class BadRequestError extends DomainError {
     constructor(reason?: string, data?: {}) {
         super('Bad Request');
 
-        this.code = 400;
+        this.status = 400;
         this.reason = reason;
         this.data = data;
     }
@@ -34,16 +35,16 @@ export class ConflictError extends DomainError {
     constructor(reason?: string) {
         super('Forbidden');
 
-        this.code = 409;
+        this.status = 409;
         this.reason = reason;
     }
 }
 
-export class ForbidenError extends DomainError {
+export class ForbiddenError extends DomainError {
     constructor(reason?: string) {
         super('Forbidden');
 
-        this.code = 403;
+        this.status = 403;
         this.reason = reason;
     }
 }
@@ -52,7 +53,7 @@ export class InternalError extends DomainError {
     constructor(reason?: string) {
         super('Internal Server Error');
 
-        this.code = 500;
+        this.status = 500;
         this.reason = reason;
     }
 }
@@ -61,7 +62,7 @@ export class UnauthorizedError extends DomainError {
     constructor(reason?: string) {
         super('Unauthorized');
 
-        this.code = 401;
+        this.status = 401;
         this.reason = reason;
     }
 }
@@ -70,6 +71,6 @@ export class UnprocessableEntity extends DomainError {
     constructor(message: string = 'Unprocessable Entity') {
         super(message);
 
-        this.code = 422;
+        this.status = 422;
     }
 }
