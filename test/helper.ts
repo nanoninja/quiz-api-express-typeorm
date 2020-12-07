@@ -1,3 +1,7 @@
+// https://drikerf.com/testing-express-apps-with-mocha-chai-and-puppeteer/
+// https://testing340.blogspot.com/2019/03/express-has-failed-to-disconnect-error.html
+// https://mochajs.org/#hook-level
+
 import 'mocha';
 import chai = require('chai');
 import chaiHttp = require('chai-http');
