@@ -144,7 +144,6 @@ export class UserController extends BaseController {
         if (errors.length > 0) {
             throw new BadRequestError('Input error', errors);
         }
-
         user.setPassword(body.password);
 
         const roleRepo: RoleRepository = getCustomRepository(RoleRepository);
@@ -153,7 +152,6 @@ export class UserController extends BaseController {
         if (!role) {
             throw new InternalError();
         }
-
         user.roles = [role];
 
         try {
