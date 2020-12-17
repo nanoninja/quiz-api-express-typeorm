@@ -5,6 +5,8 @@
    "scripts": {
       "start": "ts-node src/main.ts",
       "dev": "nodemon",
+      "typeorm": "ts-node ./node_modules/typeorm/cli -f ./ormconfig.json",
+      "schema:sync": "npm run typeorm schema:drop && npm run typeorm schema:sync",
       "docker-start-dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
       "fixtures": "fixtures ./fixtures/test --config ormconfig.json --sync --require=ts-node/register --require=ts-node/register",
       "test": "npm run fixtures && export PORT=6000; mocha --require ts-node/register ts test/**/*.spec.ts",
