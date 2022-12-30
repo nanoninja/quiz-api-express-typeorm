@@ -21,7 +21,7 @@
       "@types/mocha": "^5.2.7",
       "@types/node": "^8.10.66",
       "chai": "^4.2.0",
-      "mocha": "^6.2.3",
+      "mocha": "^10.2.0",
       "nodemon": "^2.0.6",
       "ts-node": "3.3.0",
       "typeorm-fixtures-cli": "^1.8.1",
